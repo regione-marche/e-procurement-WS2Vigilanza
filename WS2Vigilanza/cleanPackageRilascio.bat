@@ -1,0 +1,1 @@
+mvn -Dfilter=rilascio clean package

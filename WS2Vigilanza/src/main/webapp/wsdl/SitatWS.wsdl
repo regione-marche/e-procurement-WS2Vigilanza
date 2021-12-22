@@ -1,0 +1,667 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions xmlns:apachesoap="http://xml.apache.org/xml-soap" xmlns:impl="http://ws.vigilanza.sil.eldasoft.it" xmlns:typ="http://beans.ws.vigilanza.sil.eldasoft.it" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:wsdlsoap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="http://ws.vigilanza.sil.eldasoft.it">
+
+	<wsdl:types>
+		<schema xmlns="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" targetNamespace="http://beans.ws.vigilanza.sil.eldasoft.it">
+
+			<complexType name="LoginType">
+				<sequence>
+           <element maxOccurs="1" minOccurs="1" name="login" type="string"/>
+           <element maxOccurs="1" minOccurs="1" name="password" type="string"/>
+				</sequence>
+			</complexType>
+
+			<complexType name="ResponseType">
+				<sequence>
+					<element maxOccurs="1" minOccurs="1" name="success" nillable="false" type="boolean" />
+					<element maxOccurs="1" minOccurs="0" name="error" nillable="true" type="xsd:string" />					<element maxOccurs="unbounded" minOccurs="0" name="resultLotti" type="typ:ResponseLottoType" />
+				</sequence>
+			</complexType>
+
+			<complexType name="ResponseAvvisoType">
+				<sequence>
+					<element maxOccurs="1" minOccurs="1" name="success" nillable="false" type="boolean" />
+					<element maxOccurs="1" minOccurs="0" name="error" nillable="true" type="xsd:string" />
+				</sequence>
+			</complexType>
+
+			<complexType name="ResponsePubblicazioneType">
+				<sequence>
+					<element maxOccurs="1" minOccurs="1" name="success" nillable="false" type="boolean" />
+					<element maxOccurs="1" minOccurs="0" name="error" nillable="true" type="xsd:string" />
+				</sequence>
+			</complexType>
+
+			<complexType name="ResponseLottoType">
+				<sequence>
+					<element name="CIG" type="xsd:string" maxOccurs="1" minOccurs="1" />
+					<element name="resultSchedaAType" type="typ:ResponseSchedaAType" maxOccurs="1" minOccurs="0" />
+					<element name="resultSchedaBType" type="typ:ResponseSchedaBType" maxOccurs="unbounded" minOccurs="0" />
+				</sequence>
+			</complexType>
+			
+			<complexType name="ResponseSchedaAType">
+				<sequence>
+					<element maxOccurs="1" minOccurs="1" name="success" type="xsd:boolean" />
+					<element maxOccurs="unbounded" minOccurs="0" name="msgScheda" type="xsd:string" />
+				</sequence>
+			</complexType>
+
+			<complexType name="ResponseSchedaBType">
+				<complexContent>
+					<extension base="typ:ResponseSchedaAType">
+						<sequence>
+							<element maxOccurs="1" minOccurs="1" name="numeroScheda" type="xsd:int" />
+						</sequence>
+					</extension>
+				</complexContent>
+			</complexType>
+
+			<complexType name="TestataType">
+				<sequence>
+					<element maxOccurs="1" minOccurs="1" name="CFEIN" type="xsd:string">
+						<annotation>
+							<documentation>Codice fiscale della Stazione appaltante</documentation> 
+						</annotation>
+					</element>
+					<element maxOccurs="1" minOccurs="0" name="SOVRASCR" type="xsd:boolean">
+						<annotation>
+							<documentation>Sovrascrittura dei dati</documentation>
+						</annotation>
+					</element> 
+				</sequence>
+			</complexType>
+
+			<complexType name="IstanzaOggettoType">
+				<annotation>
+					<documentation>
+						Oggetto in input comune a tutti i metodi del WS. E' costituito dalla testata (TestataType)
+						e dalla stringa che rappresenta l'XML dell'oggetto inviato dal client.
+					</documentation> 
+				</annotation>
+				<sequence>
+					<element maxOccurs="1" minOccurs="1" name="testata" nillable="false" type="typ:TestataType"/>
+					<element maxOccurs="1" minOccurs="1" name="oggettoXML" nillable="false" type="xsd:string"/> 
+				</sequence>
+			</complexType>
+			
+			<element name="istanziaGara">
+				<complexType>
+					<sequence>
+						<element maxOccurs="1" minOccurs="1" name="login" type="typ:LoginType"/>
+            <element maxOccurs="1" minOccurs="1" name="garaLotti" type="typ:IstanzaOggettoType"/>
+					</sequence>
+				</complexType>
+			</element>
+			
+			<element name="istanziaGaraResponse">
+				<complexType>
+					<sequence>
+						<element maxOccurs="1" minOccurs="1" name="istanziaGaraReturn" type="typ:ResponseType"/>
+					</sequence>
+				</complexType>
+			</element>
+			
+			<element name="istanziaAggiudicazione">
+				<complexType>
+					<sequence>
+						<element maxOccurs="1" minOccurs="1" name="login" type="typ:LoginType"/>
+						<element maxOccurs="1" minOccurs="1" name="aggiudicazione" nillable="false" type="typ:IstanzaOggettoType"/>
+					</sequence>
+				</complexType>
+			</element>
+
+			<element name="istanziaAggiudicazioneResponse">
+				<complexType>
+					<sequence>
+						<element maxOccurs="1" minOccurs="1" name="aggiudicazioneReturn" type="typ:ResponseType"/>
+					</sequence>
+				</complexType>
+			</element>
+			
+			<element name="istanziaEsito">
+				<complexType>
+					<sequence>
+						<element maxOccurs="1" minOccurs="1" name="login" type="typ:LoginType"/>
+						<element maxOccurs="1" minOccurs="1" name="esito" type="typ:IstanzaOggettoType"/>
+					</sequence>
+				</complexType>
+			</element>
+
+			<element name="istanziaEsitoResponse">
+				<complexType>
+					<sequence>
+						<element maxOccurs="1" minOccurs="1" name="esitoReturn" type="typ:ResponseType"/>
+					</sequence>
+				</complexType>
+			</element>
+			
+			<element name="istanziaContratto">
+				<complexType>
+					<sequence>
+						<element maxOccurs="1" minOccurs="1" name="login" type="typ:LoginType"/>
+						<element maxOccurs="1" minOccurs="1" name="contratto" type="typ:IstanzaOggettoType"/>
+					</sequence>
+				</complexType>
+			</element>
+
+			<element name="istanziaContrattoResponse">
+				<complexType>
+					<sequence>
+						<element maxOccurs="1" minOccurs="1" name="contrattoResult" type="typ:ResponseType"/>
+					</sequence>
+				</complexType>
+			</element>
+
+			<element name="istanziaInizio">
+				<complexType>
+					<sequence>
+						<element maxOccurs="1" minOccurs="1" name="login" type="typ:LoginType"/>
+						<element maxOccurs="1" minOccurs="1" name="inizio" type="typ:IstanzaOggettoType"/>
+					</sequence>
+				</complexType>
+			</element>
+
+			<element name="istanziaInizioResponse">
+				<complexType>
+					<sequence>
+						<element maxOccurs="1" minOccurs="1" name="inizioResult" type="typ:ResponseType"/>
+					</sequence>
+				</complexType>
+			</element>
+
+			<element name="istanziaAvanzamento">
+				<complexType>
+					<sequence>
+						<element maxOccurs="1" minOccurs="1" name="login" type="typ:LoginType"/>
+						<element maxOccurs="1" minOccurs="1" name="avanzamento" type="typ:IstanzaOggettoType"/>
+					</sequence>
+				</complexType>
+			</element>
+
+			<element name="istanziaAvanzamentoResponse">
+				<complexType>
+					<sequence>
+						<element maxOccurs="1" minOccurs="1" name="avanzamentoResult" type="typ:ResponseType"/>
+					</sequence>
+				</complexType>
+			</element>
+
+			<element name="istanziaSospensione">
+				<complexType>
+					<sequence>
+						<element maxOccurs="1" minOccurs="1" name="login" type="typ:LoginType"/>
+						<element maxOccurs="1" minOccurs="1" name="sospensione" type="typ:IstanzaOggettoType"/>
+					</sequence>
+				</complexType>
+			</element>
+
+			<element name="istanziaSospensioneResponse">
+				<complexType>
+					<sequence>
+						<element name="sospensioneResult" nillable="false" type="typ:ResponseType"/>
+					</sequence>
+				</complexType>
+			</element>
+
+			<element name="istanziaVariante">
+				<complexType>
+					<sequence>
+						<element maxOccurs="1" minOccurs="1" name="login" type="typ:LoginType"/>
+						<element maxOccurs="1" minOccurs="1" name="variante" type="typ:IstanzaOggettoType"/>
+					</sequence>
+				</complexType>
+			</element>
+
+			<element name="istanziaVarianteResponse">
+				<complexType>
+					<sequence>
+						<element maxOccurs="1" minOccurs="1" name="varianteResult" type="typ:ResponseType"/>
+					</sequence>
+				</complexType>
+			</element>
+
+			<element name="istanziaSubappalto">
+				<complexType>
+					<sequence>
+						<element maxOccurs="1" minOccurs="1" name="login" type="typ:LoginType"/>
+						<element maxOccurs="1" minOccurs="1" name="subappalto" type="typ:IstanzaOggettoType"/>
+					</sequence>
+				</complexType>
+			</element>
+
+			<element name="istanziaSubappaltoResponse">
+				<complexType>
+					<sequence>
+						<element maxOccurs="1" minOccurs="1" name="subappaltoResult" type="typ:ResponseType"/>
+					</sequence>
+				</complexType>
+			</element>
+
+			<element name="istanziaConclusione">
+				<complexType>
+					<sequence>
+						<element maxOccurs="1" minOccurs="1" name="login" type="typ:LoginType"/>
+						<element maxOccurs="1" minOccurs="1" name="conclusione" type="typ:IstanzaOggettoType"/>
+					</sequence>
+				</complexType>
+			</element>
+
+			<element name="istanziaConclusioneResponse">
+				<complexType>
+					<sequence>
+						<element maxOccurs="1" minOccurs="1" name="conclusioneResult" type="typ:ResponseType"/>
+					</sequence>
+				</complexType>
+			</element>
+			
+			<element name="istanziaCollaudo">
+				<complexType>
+					<sequence>
+						<element maxOccurs="1" minOccurs="1" name="login" type="typ:LoginType"/>
+						<element maxOccurs="1" minOccurs="1" name="collaudo" type="typ:IstanzaOggettoType"/>
+					</sequence>
+				</complexType>
+			</element>
+
+			<element name="istanziaCollaudoResponse">
+				<complexType>
+					<sequence>
+						<element maxOccurs="1" minOccurs="1" name="collaudoResult" type="typ:ResponseType"/>
+					</sequence>
+				</complexType>
+			</element>
+
+			<element name="istanziaElencoImpreseInvitate">
+				<complexType>
+					<sequence>
+						<element maxOccurs="1" minOccurs="1" name="login" type="typ:LoginType"/>
+						<element maxOccurs="1" minOccurs="1" name="elencoImpreseInvitate" type="typ:IstanzaOggettoType"/>
+					</sequence>
+				</complexType>
+			</element>
+
+			<element name="istanziaElencoImpreseInvitateResponse">
+				<complexType>
+					<sequence>
+						<element maxOccurs="1" minOccurs="1" name="istanziaElencoImpreseInvitateReturn" type="typ:ResponseType"/>
+					</sequence>
+				</complexType>
+			</element>
+
+			<element name="istanziaAvviso">
+				<complexType>
+					<sequence>
+						<element maxOccurs="1" minOccurs="1" name="login" type="typ:LoginType"/>
+						<element maxOccurs="1" minOccurs="1" name="avviso" type="typ:IstanzaOggettoType"/>
+					</sequence>
+				</complexType>
+			</element>
+
+			<element name="istanziaAvvisoResponse">
+				<complexType>
+					<sequence>
+						<element maxOccurs="1" minOccurs="1" name="avvisoResult" type="typ:ResponseAvvisoType"/>
+					</sequence>
+				</complexType>
+			</element>
+       
+			<element name="istanziaPubblicazioneDocumenti">
+				<complexType>
+					<sequence>
+						<element maxOccurs="1" minOccurs="1" name="login" type="typ:LoginType"/>
+						<element maxOccurs="1" minOccurs="1" name="pubblicazioneDocumenti" type="typ:IstanzaOggettoType"/>
+					</sequence>
+				</complexType>
+			</element>
+			
+			<element name="istanziaPubblicazioneDocumentiResponse">
+				<complexType>
+					<sequence>
+						<element maxOccurs="1" minOccurs="1" name="pubblicazioneDocumentiResult" type="typ:ResponsePubblicazioneType"/>
+					</sequence>
+				</complexType>
+			</element> 
+
+		</schema>
+    </wsdl:types>
+
+	<wsdl:message name="istanziaGaraRequest">
+		<wsdl:part element="typ:istanziaGara" name="parameters"/>
+	</wsdl:message>
+	
+	<wsdl:message name="istanziaGaraResponse">
+		<wsdl:part element="typ:istanziaGaraResponse" name="parameters"/>
+	</wsdl:message>
+	
+	<wsdl:message name="istanziaAggiudicazioneRequest">
+		<wsdl:part element="typ:istanziaAggiudicazione" name="parameters"/>
+	</wsdl:message>
+	
+	<wsdl:message name="istanziaAggiudicazioneResponse">
+		<wsdl:part element="typ:istanziaAggiudicazioneResponse" name="parameters"/>
+	</wsdl:message>
+	
+	<wsdl:message name="istanziaEsitoRequest">
+		<wsdl:part element="typ:istanziaEsito" name="parameters"/>
+	</wsdl:message>
+	
+	<wsdl:message name="istanziaEsitoResponse">
+		<wsdl:part element="typ:istanziaEsitoResponse" name="parameters"/>
+	</wsdl:message>
+		
+	<wsdl:message name="istanziaContrattoRequest">
+		<wsdl:part element="typ:istanziaContratto" name="parameters"/>
+	</wsdl:message>
+
+	<wsdl:message name="istanziaContrattoResponse">
+		<wsdl:part element="typ:istanziaContrattoResponse" name="parameters"/>
+	</wsdl:message>
+
+	<wsdl:message name="istanziaInizioRequest">
+		<wsdl:part element="typ:istanziaInizio" name="parameters"/>
+	</wsdl:message>
+
+	<wsdl:message name="istanziaInizioResponse">
+		<wsdl:part element="typ:istanziaInizioResponse" name="parameters"/>
+	</wsdl:message>
+
+	<wsdl:message name="istanziaAvanzamentoRequest">
+		<wsdl:part element="typ:istanziaAvanzamento" name="parameters"/>
+	</wsdl:message>
+
+	<wsdl:message name="istanziaAvanzamentoResponse">
+		<wsdl:part element="typ:istanziaAvanzamentoResponse" name="parameters"/>
+	</wsdl:message>
+
+	<wsdl:message name="istanziaSospensioneRequest">
+		<wsdl:part element="typ:istanziaSospensione" name="parameters"/>
+	</wsdl:message>
+
+	<wsdl:message name="istanziaSospensioneResponse">
+		<wsdl:part element="typ:istanziaSospensioneResponse" name="parameters"/>
+	</wsdl:message>
+
+	<wsdl:message name="istanziaVarianteRequest">
+		<wsdl:part element="typ:istanziaVariante" name="parameters"/>
+	</wsdl:message>
+
+	<wsdl:message name="istanziaVarianteResponse">
+		<wsdl:part element="typ:istanziaVarianteResponse" name="parameters"/>
+	</wsdl:message>
+
+	<wsdl:message name="istanziaSubappaltoRequest">
+		<wsdl:part element="typ:istanziaSubappalto" name="parameters"/>
+	</wsdl:message>
+
+	<wsdl:message name="istanziaSubappaltoResponse">
+		<wsdl:part element="typ:istanziaSubappaltoResponse" name="parameters"/>
+	</wsdl:message>
+
+	<wsdl:message name="istanziaCollaudoRequest">
+		<wsdl:part element="typ:istanziaCollaudo" name="parameters"/>
+	</wsdl:message>
+
+	<wsdl:message name="istanziaCollaudoResponse">
+		<wsdl:part element="typ:istanziaCollaudoResponse" name="parameters"/>
+	</wsdl:message>
+	
+	<wsdl:message name="istanziaConclusioneRequest">
+		<wsdl:part element="typ:istanziaConclusione" name="parameters"/>
+	</wsdl:message>
+
+	<wsdl:message name="istanziaConclusioneResponse">
+		<wsdl:part element="typ:istanziaConclusioneResponse" name="parameters"/>
+	</wsdl:message>
+
+	<wsdl:message name="istanziaElencoImpreseInvitateRequest">
+		<wsdl:part element="typ:istanziaElencoImpreseInvitate" name="parameters"/>
+	</wsdl:message>
+	
+	<wsdl:message name="istanziaElencoImpreseInvitateResponse">
+		<wsdl:part element="typ:istanziaElencoImpreseInvitateResponse" name="parameters"/>
+	</wsdl:message>
+
+	<wsdl:message name="istanziaAvvisoRequest">
+		<wsdl:part element="typ:istanziaAvviso" name="parameters" />
+	</wsdl:message>
+	
+	<wsdl:message name="istanziaAvvisoResponse">
+		<wsdl:part element="typ:istanziaAvvisoResponse" name="parameters"/>
+	</wsdl:message>
+	
+	<wsdl:message name="istanziaPubblicazioneDocumentiRequest">
+		<wsdl:part element="typ:istanziaPubblicazioneDocumenti" name="parameters" />
+	</wsdl:message>
+	
+	<wsdl:message name="istanziaPubblicazioneDocumentiResponse">
+		<wsdl:part element="typ:istanziaPubblicazioneDocumentiResponse" name="parameters"/>
+	</wsdl:message>
+	
+	<wsdl:portType name="SitatWS">
+
+		<wsdl:operation name="istanziaGara">
+			<wsdl:input message="impl:istanziaGaraRequest" name="istanziaGaraRequest"/>
+			<wsdl:output message="impl:istanziaGaraResponse" name="istanziaGaraResponse"/>
+		</wsdl:operation>
+
+		<wsdl:operation name="istanziaAggiudicazione">
+			<wsdl:input message="impl:istanziaAggiudicazioneRequest" name="istanziaAggiudicazioneRequest"/>
+			<wsdl:output message="impl:istanziaAggiudicazioneResponse" name="istanziaAggiudicazioneResponse"/>
+		</wsdl:operation>
+
+		<wsdl:operation name="istanziaEsito">
+			<wsdl:input message="impl:istanziaEsitoRequest" name="istanziaEsitoRequest"/>
+			<wsdl:output message="impl:istanziaEsitoResponse" name="istanziaEsitoResponse"/>
+		</wsdl:operation>
+
+		<wsdl:operation name="istanziaContratto">
+			<wsdl:input message="impl:istanziaContrattoRequest" name="istanziaContrattoRequest"/>
+			<wsdl:output message="impl:istanziaContrattoResponse" name="istanziaContrattoResponse"/>
+		</wsdl:operation>
+
+		<wsdl:operation name="istanziaInizio">
+			<wsdl:input message="impl:istanziaInizioRequest" name="istanziaInizioRequest"/>
+			<wsdl:output message="impl:istanziaInizioResponse" name="istanziaInizioResponse"/>
+		</wsdl:operation>
+
+		<wsdl:operation name="istanziaAvanzamento">
+			<wsdl:input message="impl:istanziaAvanzamentoRequest" name="istanziaAvanzamentoRequest"/>
+			<wsdl:output message="impl:istanziaAvanzamentoResponse" name="istanziaAvanzamentoResponse"/>
+		</wsdl:operation>
+		
+		<wsdl:operation name="istanziaSospensione">
+			<wsdl:input message="impl:istanziaSospensioneRequest" name="istanziaSospensioneRequest"/>
+			<wsdl:output message="impl:istanziaSospensioneResponse" name="istanziaSospensioneResponse"/>
+		</wsdl:operation>
+
+		<wsdl:operation name="istanziaVariante">
+			<wsdl:input message="impl:istanziaVarianteRequest" name="istanziaVarianteRequest"/>
+			<wsdl:output message="impl:istanziaVarianteResponse" name="istanziaVarianteResponse"/>
+		</wsdl:operation>
+
+		<wsdl:operation name="istanziaSubappalto">
+			<wsdl:input message="impl:istanziaSubappaltoRequest" name="istanziaSubappaltoRequest"/>
+			<wsdl:output message="impl:istanziaSubappaltoResponse" name="istanziaSubappaltoResponse"/>
+		</wsdl:operation>
+
+		<wsdl:operation name="istanziaConclusione">
+			<wsdl:input message="impl:istanziaConclusioneRequest" name="istanziaConclusioneRequest"/>
+			<wsdl:output message="impl:istanziaConclusioneResponse" name="istanziaConclusioneResponse"/>
+		</wsdl:operation>
+		
+		<wsdl:operation name="istanziaCollaudo">
+			<wsdl:input message="impl:istanziaCollaudoRequest" name="istanziaCollaudoRequest"/>
+			<wsdl:output message="impl:istanziaCollaudoResponse" name="istanziaCollaudoResponse"/>
+		</wsdl:operation>
+		
+		<wsdl:operation name="istanziaElencoImpreseInvitate">
+			<wsdl:input message="impl:istanziaElencoImpreseInvitateRequest" name="istanziaElencoImpreseInvitateRequest"/>
+			<wsdl:output message="impl:istanziaElencoImpreseInvitateResponse" name="istanziaElencoImpreseInvitateResponse"/>
+		</wsdl:operation>
+
+		<wsdl:operation name="istanziaAvviso">
+			<wsdl:input message="impl:istanziaAvvisoRequest" name="istanziaAvvisoRequest"/>
+			<wsdl:output message="impl:istanziaAvvisoResponse" name="istanziaAvvisoResponse"/>
+		</wsdl:operation>
+		
+		<wsdl:operation name="istanziaPubblicazioneDocumenti">
+			<wsdl:input message="impl:istanziaPubblicazioneDocumentiRequest" name="istanziaPubblicazioneDocumentiRequest"/>
+			<wsdl:output message="impl:istanziaPubblicazioneDocumentiResponse" name="istanziaPubblicazioneDocumentiResponse"/>
+		</wsdl:operation>
+		
+	</wsdl:portType>
+
+	<wsdl:binding name="SitatWSSoapBinding" type="impl:SitatWS">
+		
+		<wsdlsoap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+		
+		<wsdl:operation name="istanziaGara">
+			<wsdlsoap:operation soapAction=""/>
+			<wsdl:input name="istanziaGaraRequest">
+				<wsdlsoap:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output name="istanziaGaraResponse">
+				<wsdlsoap:body use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+
+		<wsdl:operation name="istanziaAggiudicazione">
+			<wsdlsoap:operation soapAction=""/>
+			<wsdl:input name="istanziaAggiudicazioneRequest">
+				<wsdlsoap:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output name="istanziaAggiudicazioneResponse">
+				<wsdlsoap:body use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+
+		<wsdl:operation name="istanziaEsito">
+			<wsdlsoap:operation soapAction=""/>
+			<wsdl:input name="istanziaEsitoRequest">
+				<wsdlsoap:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output name="istanziaEsitoResponse">
+				<wsdlsoap:body use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+
+		<wsdl:operation name="istanziaContratto">
+			<wsdlsoap:operation soapAction=""/>
+			<wsdl:input name="istanziaContrattoRequest">
+				<wsdlsoap:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output name="istanziaContrattoResponse">
+				<wsdlsoap:body use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+		
+		<wsdl:operation name="istanziaInizio">
+			<wsdlsoap:operation soapAction=""/>
+			<wsdl:input name="istanziaInizioRequest">
+				<wsdlsoap:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output name="istanziaInizioResponse">
+				<wsdlsoap:body use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+
+		<wsdl:operation name="istanziaAvanzamento">
+			<wsdlsoap:operation soapAction=""/>
+			<wsdl:input name="istanziaAvanzamentoRequest">
+				<wsdlsoap:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output name="istanziaAvanzamentoResponse">
+				<wsdlsoap:body use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+		
+		<wsdl:operation name="istanziaSospensione">
+			<wsdlsoap:operation soapAction=""/>
+			<wsdl:input name="istanziaSospensioneRequest">
+				<wsdlsoap:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output name="istanziaSospensioneResponse">
+				<wsdlsoap:body use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+
+		<wsdl:operation name="istanziaVariante">
+			<wsdlsoap:operation soapAction=""/>
+			<wsdl:input name="istanziaVarianteRequest">
+				<wsdlsoap:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output name="istanziaVarianteResponse">
+				<wsdlsoap:body use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+		
+		<wsdl:operation name="istanziaSubappalto">
+			<wsdlsoap:operation soapAction=""/>
+			<wsdl:input name="istanziaSubappaltoRequest">
+				<wsdlsoap:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output name="istanziaSubappaltoResponse">
+				<wsdlsoap:body use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+		
+		<wsdl:operation name="istanziaConclusione">
+			<wsdlsoap:operation soapAction=""/>
+			<wsdl:input name="istanziaConclusioneRequest">
+				<wsdlsoap:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output name="istanziaConclusioneResponse">
+				<wsdlsoap:body use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+		
+		<wsdl:operation name="istanziaCollaudo">
+			<wsdlsoap:operation soapAction=""/>
+			<wsdl:input name="istanziaCollaudoRequest">
+				<wsdlsoap:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output name="istanziaCollaudoResponse">
+				<wsdlsoap:body use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+
+		<wsdl:operation name="istanziaElencoImpreseInvitate">
+			<wsdlsoap:operation soapAction=""/>
+			<wsdl:input name="istanziaElencoImpreseInvitateRequest">
+				<wsdlsoap:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output name="istanziaElencoImpreseInvitateResponse">
+				<wsdlsoap:body use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+		
+		<wsdl:operation name="istanziaAvviso">
+			<wsdlsoap:operation soapAction=""/>
+			<wsdl:input name="istanziaAvvisoRequest">
+				<wsdlsoap:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output name="istanziaAvvisoResponse">
+				<wsdlsoap:body use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+		
+		<wsdl:operation name="istanziaPubblicazioneDocumenti">
+			<wsdlsoap:operation soapAction=""/>
+			<wsdl:input name="istanziaPubblicazioneDocumentiRequest">
+				<wsdlsoap:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output name="istanziaPubblicazioneDocumentiResponse">
+				<wsdlsoap:body use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+		
+	</wsdl:binding>
+
+	<wsdl:service name="SitatWSService">
+		<wsdl:port binding="impl:SitatWSSoapBinding" name="SitatWS">
+			<wsdlsoap:address location="http://localhost:8080/WebService2Project/services/SitatWS"/>
+		</wsdl:port>
+	</wsdl:service>
+
+</wsdl:definitions>

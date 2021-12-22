@@ -1,0 +1,217 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>it.maggioli.eldasoft</groupId>
+		<artifactId>eldasoft-base</artifactId>
+		<version>1.2.0</version>
+	</parent>
+	<groupId>it.maggioli.eldasoft.sil</groupId>
+	<artifactId>ws2vigilanza-webapp</artifactId>
+	<version>5.6.5</version>
+	<packaging>war</packaging>
+
+	<name>Web Service Integrazione SIL con Vigilanza</name>
+	
+	<properties>
+		<geneweb.version>2.9.0</geneweb.version>
+		<codapp>wsw9</codapp>
+		<project.build.sourceEncoding>Cp1252</project.build.sourceEncoding>
+		<filter.filename>${filter}</filter.filename>
+	</properties>
+
+	<dependencies>
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>jsp-api</artifactId>
+			<version>2.0</version>
+      <scope>provided</scope>
+		</dependency>
+    <dependency>
+      <groupId>javax.servlet</groupId>
+      <artifactId>servlet-api</artifactId>
+      <version>2.4</version>
+      <scope>provided</scope>
+    </dependency>
+		<dependency>
+			<groupId>it.maggioli.eldasoft.sil.avcp</groupId>
+			<artifactId>alice2avcp-datatypes</artifactId>
+			<version>1.2.8</version>
+		</dependency>
+		<dependency>
+			<groupId>it.maggioli.eldasoft.commons</groupId>
+			<artifactId>geneweb-engine</artifactId>
+			<version>${geneweb.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>it.maggioli.eldasoft.commons</groupId>
+			<artifactId>geneweb-webapp</artifactId>
+			<version>${geneweb.version}</version>
+			<type>war</type>
+		</dependency>
+		<dependency>
+			<groupId>it.maggioli.eldasoft.sil</groupId>
+			<artifactId>wssimog-datatypes</artifactId>
+			<version>1.0.8</version>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<finalName>WS2Vigilanza</finalName>
+
+		<!-- filtri prima sul file definito con il profilo in uso, e poi usando il default-filter -->
+		<filters>
+			<filter>${project.build.directory}/dependencies-unpacked/geneweb-webapp/configuration/default-filter.properties</filter>
+			<filter>src/main/filters/${filter.filename}.properties</filter>
+			<filter>custom-filter.properties</filter>
+		</filters>
+
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>true</filtering>
+			</resource>
+		</resources>
+		
+		<plugins>
+			<plugin>
+				<!-- si validano i parametri della chiamata -->
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-enforcer-plugin</artifactId>
+				<version>1.4.1</version>
+				<executions>
+					<execution>
+						<phase>validate</phase>
+						<goals>
+							<goal>enforce</goal>
+						</goals>
+						<configuration>
+						<rules>
+							<requireProperty>
+								<property>filter</property>
+								<message>Valorizzare il parametro -Dfilter con un NOME FILE (senza estensione) presente nella cartella src/main/filters</message>
+							</requireProperty>
+						</rules>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>		
+			
+			<plugin>
+				<!-- espande in una cartella di appoggio alcuni file presenti in geneweb per le successive elaborazioni -->
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<version>2.3</version>
+				<executions>
+					<execution>
+						<id>unpack-geneweb-dependencies</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>unpack-dependencies</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${project.build.directory}/dependencies-unpacked/geneweb-webapp</outputDirectory>
+							<verbose>true</verbose>
+							<overWriteReleases>true</overWriteReleases>
+							<overWriteSnapshots>true</overWriteSnapshots>
+							<appendOutput>true</appendOutput>
+							<includeGroupIds>it.maggioli.eldasoft.commons</includeGroupIds>
+							<includeArtifactIds>geneweb-webapp</includeArtifactIds>
+							<includes>configuration/*.properties,WEB-INF/classes/jdbc.properties,WEB-INF/classes/sql.properties,WEB-INF/xml/ibatis/sql-map-config.xml</includes>
+							<!-- WEB-INF/classes/AliceResources.properties, -->
+							<!-- WEB-INF/classes/log4j.properties, -->
+							<!-- non si eredita il log4j.properties da GeneWeb, perche' si andrebbe a creare il nome sbagliato del file di log. -->
+							<!-- Il file log4j.properties � ridefinito nella cartella resources -->
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			
+			<plugin>
+				<artifactId>maven-resources-plugin</artifactId>
+				<version>2.5</version>
+				<executions>
+					<!-- copia i file di geneweb per i quali si richiede il filtraggio con le sostituzioni -->
+					<execution>
+						<id>copy-resources</id>
+						<phase>process-sources</phase>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${project.build.directory}/war/work/resources</outputDirectory>
+							<resources>          
+								<resource>
+									<directory>${project.build.directory}/dependencies-unpacked/geneweb-webapp/WEB-INF</directory>
+									<includes>
+										<include>classes/**</include>
+									</includes>
+									<filtering>true</filtering>
+								</resource>
+							</resources>              
+						</configuration>            
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
+				<!-- build con i file di struts e ibatis corretti, un unico file di resources, e properties filtrate ed i jar offuscati -->
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-war-plugin</artifactId>
+				<version>2.1.1</version>
+				<configuration>
+					<overlays>
+						<overlay>
+							<groupId>it.maggioli.eldasoft.commons</groupId>
+							<artifactId>geneweb-webapp</artifactId>
+							<includes>
+								<include>WEB-INF/xml/ibatis/sql-map-config.xml</include>
+							</includes>
+						</overlay>
+					</overlays>
+					<webResources>
+						<resource>
+							<!-- risorse filtrate derivate dalla webapp geneweb-webapp -->
+							<!-- NOTA BENE: MAI METTERE QUESTA RISORSA PER ULTIMA NELLA SEZIONE, ALTRIMENTI PER UN BACO DI MAVEN NON SI COPIANO I FILE! -->
+							<directory>${project.build.directory}/war/work/resources/classes</directory>
+							<targetPath>WEB-INF/classes</targetPath>
+							<includes>
+								<include>*</include>
+							</includes>
+						</resource>
+						<resource>
+							<!-- "touch" del web.xml inserito nell'artefatto -->
+							<directory>src/main/webapp/WEB-INF</directory>
+							<targetPath>WEB-INF</targetPath>
+							<includes>
+								<include>web.xml</include>
+							</includes>
+							<filtering>true</filtering>
+						</resource>
+					</webResources>
+				</configuration>
+			</plugin>
+			
+			<plugin>
+				<!-- crea le distribuzioni in formato zip e tar.gz -->
+				<artifactId>maven-assembly-plugin</artifactId>
+				<configuration>
+					<descriptors>
+						<descriptor>src/main/assembly/dep.xml</descriptor>
+					</descriptors>
+				</configuration>			
+				<executions> 
+					<execution> 
+						<id>make-assembly</id>
+						<phase>package</phase> 
+						<goals> 
+							<goal>single</goal> 
+						</goals>
+					</execution> 
+				</executions>			
+			</plugin>
+			
+		</plugins>
+	</build>
+</project>

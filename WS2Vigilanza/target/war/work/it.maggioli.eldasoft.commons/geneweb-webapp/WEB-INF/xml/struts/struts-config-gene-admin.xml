@@ -1,0 +1,241 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts-config PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 1.3//EN"
+                               "http://struts.apache.org/dtds/struts-config_1_3.dtd">
+<struts-config>
+    <form-beans>
+        <form-bean name="idForm" type="it.eldasoft.gene.commons.web.struts.IdForm"/>
+        <form-bean name="listaForm" type="it.eldasoft.gene.commons.web.struts.ListaForm"/>
+        <form-bean name="cambiaPasswordForm" type="it.eldasoft.gene.web.struts.admin.CambiaPasswordForm"/>
+        <form-bean name="gruppoForm" type="it.eldasoft.gene.web.struts.admin.GruppoForm"/>
+        <form-bean name="utentiGruppoForm" type="it.eldasoft.gene.web.struts.admin.UtentiGruppoForm"/>
+        <form-bean name="ricercheGruppoForm" type="it.eldasoft.gene.web.struts.admin.RicercheGruppoForm"/>
+        <form-bean name="modelliGruppoForm" type="it.eldasoft.gene.web.struts.admin.ModelliGruppoForm"/>
+        <form-bean name="trovaAccountForm" type="it.eldasoft.gene.web.struts.admin.TrovaAccountForm"/>
+        <form-bean name="accountForm" type="it.eldasoft.gene.web.struts.admin.AccountForm"/>
+        <form-bean name="mioAccountForm" type="it.eldasoft.gene.web.struts.admin.MioAccountForm"/>
+        <form-bean name="gruppiAccountForm" type="it.eldasoft.gene.web.struts.admin.GruppiAccountForm"/>
+        <form-bean name="cambiaPasswordAdminForm" type="it.eldasoft.gene.web.struts.admin.CambiaPasswordAdminForm"/>
+        <form-bean name="utentiProfiloForm" type="it.eldasoft.gene.web.struts.admin.UtentiProfiloForm"/>
+        <form-bean name="profiliUtenteForm" type="it.eldasoft.gene.web.struts.admin.ProfiliUtenteForm"/>
+        <form-bean name="filtroAccountLdapForm" type="it.eldasoft.gene.web.struts.admin.FiltroAccountLdapForm"/>
+    </form-beans>
+    <global-forwards>
+        <forward module="/" name="appNotLoaded" path="errorDef" redirect="true"/>
+        <forward module="/" name="login" path="/InitLogin.do"/>
+        <forward module="/" name="logged" path="/WEB-INF/pages/gene/login/alreadyLogged.jsp"/>
+        <forward module="/" name="sessionTimeOut" path="/SessionTimeOut.do" redirect="true"/>
+        <forward module="/" name="opzioneNonDisponibile" path="errorDef" redirect="true"/>
+        <forward module="/" name="opzioneNonAbilitata" path="errorDef" redirect="true"/>
+        <forward module="/" name="error" path="errorDef" redirect="true"/>
+        <forward module="/" name="closeAndRefresh" path="/WEB-INF/pages/commons/closeAndRefresh.jsp"/>
+        <forward module="/" name="applicazioneDaAttivare" path="/WEB-INF/pages/gene/attivazione/formAttivazione.jsp"/>
+    </global-forwards>
+    <action-mappings>
+        <action forward="cambiaPswDef" path="/InitCambiaPassword"/>
+        <action name="cambiaPasswordForm" parameter="metodo"
+            path="/CambiaPasswordScaduta" scope="request"
+            type="org.springframework.web.struts.DelegatingActionProxy" validate="false">
+            <forward module="/" name="errataVecchiaPassword" path="/WEB-INF/pages/gene/admin/cambiaPswScaduta.jsp"/>
+            <forward module="/" name="successScaduta" path="/CheckProfilo.do"/>
+        </action>
+        <action name="cambiaPasswordForm" parameter="metodo"
+            path="/CambiaPassword" scope="request"
+            type="org.springframework.web.struts.DelegatingActionProxy" validate="false">
+            <forward name="errataVecchiaPassword" path="cambiaPswDef"/>
+            <forward module="/" name="tornaAHomePage" path="/Home.do"/>
+        </action>
+        <action path="/ListaGruppi" scope="request"
+            type="org.springframework.web.struts.DelegatingActionProxy" validate="false">
+            <forward name="success" path="listaGruppiDef"/>
+        </action>
+        <action path="/CreaGruppo" scope="request"
+            type="org.springframework.web.struts.DelegatingActionProxy" validate="false">
+            <forward name="success" path="creaGruppoDef"/>
+        </action>
+        <action path="/DettaglioGruppo" scope="request"
+            type="org.springframework.web.struts.DelegatingActionProxy" validate="false">
+            <forward name="success" path="dettaglioGruppoDef"/>
+            <forward name="detGrpGenRic" path="dettaglioGruppoRicercaDef"/>
+        </action>
+        <action name="gruppoForm" parameter="idGruppo" path="/EditGruppo"
+            scope="request"
+            type="org.springframework.web.struts.DelegatingActionProxy" validate="false">
+            <forward name="success" path="editGruppoDef"/>
+        </action>
+        <action name="gruppoForm" parameter="metodo" path="/GruppoDispatch"
+            scope="request"
+            type="org.springframework.web.struts.DelegatingActionProxy" validate="false">
+            <forward name="successUpdate" path="/DettaglioGruppo.do"/>
+            <forward name="errorOnUpdateGruppo" path="editGruppoDef"/>
+            <forward name="successInsert" path="/DettaglioGruppo.do"/>
+            <forward name="errorOnInsertGruppo" path="/CreaGruppo.do"/>
+            <forward name="successDelete" path="/ListaGruppi.do"/>
+            <forward name="errorOnDeleteGruppo" path="/ListaGruppi.do"/>
+            <forward name="tornaAListaGruppi" path="/ListaGruppi.do"/>
+        </action>
+        <action parameter="metodo" path="/ListaUtentiGruppo" scope="request"
+            type="org.springframework.web.struts.DelegatingActionProxy" validate="false">
+            <forward name="successVisualizzaLista" path="listaUtentiGruppoDef"/>
+            <forward name="successEditLista" path="associazioneUtentiGruppoDef"/>
+        </action>
+        <action name="utentiGruppoForm" path="/SalvaUtentiGruppo"
+            scope="request"
+            type="org.springframework.web.struts.DelegatingActionProxy" validate="false">
+            <forward name="success" path="/ListaUtentiGruppo.do"/>
+        </action>
+        <action parameter="metodo" path="/ListaRicercheGruppo" scope="request"
+            type="org.springframework.web.struts.DelegatingActionProxy" validate="false">
+            <forward name="successVisualizzaLista" path="listaRicercheGruppoDef"/>
+            <forward name="successEditLista" path="associazioneRicercheGruppoDef"/>
+        </action>
+        <action name="ricercheGruppoForm" path="/SalvaRicercheGruppo"
+            scope="request"
+            type="org.springframework.web.struts.DelegatingActionProxy" validate="false">
+            <forward name="success" path="/ListaRicercheGruppo.do"/>
+        </action>
+        <action parameter="metodo" path="/ListaModelliGruppo" scope="request"
+            type="org.springframework.web.struts.DelegatingActionProxy" validate="false">
+            <forward name="successVisualizzaLista" path="listaModelliGruppoDef"/>
+            <forward name="successEditLista" path="associazioneModelliGruppoDef"/>
+        </action>
+        <action name="modelliGruppoForm" path="/SalvaModelliGruppo"
+            scope="request"
+            type="org.springframework.web.struts.DelegatingActionProxy" validate="false">
+            <forward name="success" path="/ListaModelliGruppo.do"/>
+        </action>
+        <action path="/InitTrovaAccount" scope="request"
+            type="org.springframework.web.struts.DelegatingActionProxy" validate="false">
+            <forward name="success" path="trovaAccountDef"/>
+        </action>
+        <action name="trovaAccountForm" parameter="metodo" path="/TrovaAccount"
+            scope="request"
+            type="org.springframework.web.struts.DelegatingActionProxy" validate="false">
+            <forward name="success" path="listaAccountDef"/>
+            <forward name="successNuovaRicerca" path="/InitTrovaAccount.do"/>
+            <forward name="noRecordFound" path="/InitTrovaAccount.do"/>
+        </action>
+        <action name="listaForm" parameter="metodo" path="/ListaAccount"
+            scope="request"
+            type="org.springframework.web.struts.DelegatingActionProxy" validate="false">
+            <forward name="successElimina" path="/TrovaAccount.do?metodo=trovaAccount"/>
+        </action>
+        <action parameter="metodo" path="/DettaglioAccount" scope="request"
+            type="org.springframework.web.struts.DelegatingActionProxy" validate="false">
+            <forward name="successDettaglio" path="dettaglioAccountDef"/>
+            <forward name="successModifica" path="editAccountDef"/>
+            <forward name="successAttiva" path="/TrovaAccount.do?metodo=trovaAccount"/>
+            <forward name="successDisattiva" path="/TrovaAccount.do?metodo=trovaAccount"/>
+        </action>
+        <action name="accountForm" parameter="metodo" path="/SalvaAccount"
+            scope="request"
+            type="org.springframework.web.struts.DelegatingActionProxy" validate="false">
+            <forward name="inserimentoOK" path="/DettaglioAccount.do?metodo=visualizza"/>
+            <forward name="modificaOK" path="/DettaglioAccount.do?metodo=visualizza"/>
+            <forward name="loginKO" path="editAccountDef"/>
+        </action>
+        <action name="mioAccountForm" parameter="metodo" path="/SalvaMioAccount"
+            scope="request"
+            type="org.springframework.web.struts.DelegatingActionProxy" validate="false">
+            <forward module="/" name="tornaAHomePage" path="/Home.do"/>
+        </action>
+        <action parameter="metodo" path="/ListaGruppiAccount" scope="request"
+            type="org.springframework.web.struts.DelegatingActionProxy" validate="false">
+            <forward name="successVisualizzaLista" path="listaGruppiAccountDef"/>
+            <forward name="successEditLista" path="associazioneGruppiAccountDef"/>
+            <forward name="success" path="listaGruppiDef"/>
+        </action>
+        <action name="gruppiAccountForm" path="/SalvaGruppiAccount"
+            scope="request"
+            type="org.springframework.web.struts.DelegatingActionProxy" validate="false">
+            <forward name="success" path="/ListaGruppiAccount.do"/>
+        </action>
+        <action parameter="metodo" path="/InitCambiaPasswordAdmin"
+            scope="request"
+            type="org.springframework.web.struts.DelegatingActionProxy" validate="false">
+            <forward name="success" path="cambiaPswDef"/>
+            <forward name="successAdmin" path="cambiaPswAdminDef"/>
+        </action>
+        <action name="cambiaPasswordAdminForm" parameter="metodo"
+            path="/CambiaPasswordAdmin" scope="request"
+            type="org.springframework.web.struts.DelegatingActionProxy" validate="false">
+            <forward name="errataVecchiaPassword" path="cambiaPswAdminDef"/>
+        </action>
+        <action path="/InitCreaAccount" scope="request"
+            type="it.eldasoft.gene.web.struts.admin.InitCreaAccountAction" validate="false">
+            <forward name="successScelta" path="sceltaTipoAccountDef"/>
+            <forward name="successAccount" path="/DettaglioAccount.do?metodo=nuovo"/>
+        </action>
+        <action path="/FiltroAccountLdap" scope="request"
+            type="org.springframework.web.struts.DelegatingActionProxy" validate="false">
+            <forward name="success" path="filtroAccountLdapDef"/>
+        </action>
+        <action name="filtroAccountLdapForm" path="/ListaAccountLdap"
+            scope="request"
+            type="org.springframework.web.struts.DelegatingActionProxy" validate="false">
+            <forward name="success" path="listaAccountLdapDef"/>
+            <forward name="erroreLimite" path="/FiltroAccountLdap.do"/>
+            <forward name="noRecordFound" path="/FiltroAccountLdap.do"/>
+        </action>
+        <action name="idForm" path="/CreaAccountLdap" scope="request"
+            type="org.springframework.web.struts.DelegatingActionProxy" validate="false">
+            <forward module="/" name="success" path="editAccountDef"/>
+        </action>
+        <!-- Gestione Profili -->
+        <action name="listaForm" parameter="metodo" path="/ListaProfili"
+            scope="request"
+            type="org.springframework.web.struts.DelegatingActionProxy" validate="false">
+            <forward module="/" name="success" path="listaProfiliDef"/>
+        </action>
+        <action parameter="metodo" path="/DettaglioProfilo" scope="request"
+            type="org.springframework.web.struts.DelegatingActionProxy" validate="false">
+            <forward module="/" name="success" path="dettaglioProfiloDef"/>
+        </action>
+        <action parameter="metodo" path="/ListaAccountProfilo" scope="request"
+            type="org.springframework.web.struts.DelegatingActionProxy" validate="false">
+            <forward name="successVisualizzaLista" path="listaUtentiProfiloDef"/>
+            <forward name="successEditLista" path="associazioneUtentiProfiloDef"/>
+        </action>
+        <action name="utentiProfiloForm" path="/SalvaUtentiProfilo"
+            scope="request"
+            type="org.springframework.web.struts.DelegatingActionProxy" validate="false">
+            <forward name="success" path="/ListaAccountProfilo.do?metodo=visualizza"/>
+        </action>
+        <action parameter="metodo" path="/ListaGruppiProfilo" scope="request"
+            type="org.springframework.web.struts.DelegatingActionProxy" validate="false">
+            <forward name="successVisualizzaLista" path="listaGruppiProfiloDef"/>
+        </action>
+        <action parameter="metodo" path="/ListaProfiliAccount" scope="request"
+            type="org.springframework.web.struts.DelegatingActionProxy" validate="false">
+            <forward name="successVisualizzaLista" path="listaProfiliAccountDef"/>
+            <forward name="successEditLista" path="associazioneProfiliAccountDef"/>
+        </action>
+        <action name="profiliUtenteForm" path="/SalvaProfiliAccount"
+            scope="request"
+            type="org.springframework.web.struts.DelegatingActionProxy" validate="false">
+            <forward name="success" path="/ListaProfiliAccount.do?metodo=visualizza"/>
+        </action>
+        <action path="/ClearProfili" scope="request"
+            type="org.springframework.web.struts.DelegatingActionProxy" validate="false">
+            <forward module="/" name="success" path="/Home.do"/>
+        </action>
+        <action parameter="metodo" path="/ListaUfficiIntestatariAccount"
+            scope="request"
+            type="org.springframework.web.struts.DelegatingActionProxy" validate="false">
+            <forward name="successVisualizzaLista" path="listaUfficiIntestatariAccountDef"/>
+            <forward name="successEditLista" path="associazioneUfficiIntestatariAccountDef"/>
+        </action>
+        <action name="listaForm" path="/SalvaUfficiIntestatariAccount"
+            scope="request"
+            type="org.springframework.web.struts.DelegatingActionProxy" validate="false">
+            <forward name="success" path="/ListaUfficiIntestatariAccount.do?metodo=visualizza"/>
+        </action>
+        <action parameter="metodo" path="/InitEditMioAccount" scope="request"
+            type="org.springframework.web.struts.DelegatingActionProxy" validate="false">
+            <forward name="success" path="editMioAccountDef"/>
+        </action>
+    </action-mappings>
+    <plug-in className="org.apache.struts.tiles.TilesPlugin">
+        <set-property property="definitions-config" value="/WEB-INF/xml/tiles/tiles-defs-gene-common.xml, /WEB-INF/xml/tiles/tiles-defs-gene-admin.xml"/>
+        <set-property property="moduleAware" value="true"/>
+    </plug-in>
+</struts-config>

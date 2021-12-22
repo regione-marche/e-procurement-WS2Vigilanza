@@ -1,0 +1,803 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts-config PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 1.3//EN"
+                               "http://struts.apache.org/dtds/struts-config_1_3.dtd">
+<struts-config>
+    <form-beans>
+        <!--form-bean name="idForm"
+			type="it.eldasoft.gene.commons.web.struts.IdForm" /-->
+        <form-bean name="listaForm" type="it.eldasoft.gene.commons.web.struts.ListaForm"/>
+        <form-bean name="trovaRicercheForm" type="it.eldasoft.gene.web.struts.genric.TrovaRicercheForm"/>
+        <form-bean name="trovaRicercheExportForm" type="it.eldasoft.gene.web.struts.genric.impexp.TrovaRicercheExportForm"/>
+        <form-bean name="testataRicercaForm" type="it.eldasoft.gene.web.struts.genric.datigen.TestataRicercaForm"/>
+        <form-bean name="gruppiRicercaForm" type="it.eldasoft.gene.web.struts.genric.gruppo.GruppiRicercaForm"/>
+        <form-bean name="tabellaRicercaForm" type="it.eldasoft.gene.web.struts.genric.argomenti.TabellaRicercaForm"/>
+        <form-bean name="campoRicercaForm" type="it.eldasoft.gene.web.struts.genric.campo.CampoRicercaForm"/>
+        <form-bean name="campiRicercaForm" type="it.eldasoft.gene.web.struts.genric.campo.CampiRicercaForm"/>
+        <form-bean name="giunzioneRicercaForm" type="it.eldasoft.gene.web.struts.genric.giunzione.GiunzioneRicercaForm"/>
+        <form-bean name="parametroRicercaForm" type="it.eldasoft.gene.web.struts.genric.parametro.ParametroRicercaForm"/>
+        <form-bean name="filtroRicercaForm" type="it.eldasoft.gene.web.struts.genric.filtro.FiltroRicercaForm"/>
+        <form-bean name="ordinamentoRicercaForm" type="it.eldasoft.gene.web.struts.genric.ordinamento.OrdinamentoRicercaForm"/>
+        <form-bean name="parametriRicercaForm" type="it.eldasoft.gene.web.struts.genric.ParametriRicercaForm"/>
+        <form-bean name="datiGenProspettoForm" type="it.eldasoft.gene.web.struts.genric.prospetto.DatiGenProspettoForm"/>
+        <!-- form-bean importati da struts-config-gene-genmod.xml per l'implementazione
+		 delle ricerche con prospetto -->
+        <form-bean name="parametroModelloForm" type="it.eldasoft.gene.web.struts.genmod.ParametroModelloForm"/>
+        <form-bean name="componiModelloForm" type="it.eldasoft.gene.web.struts.genmod.ComponiModelloForm"/>
+        <form-bean name="parametriProspettoForm" type="it.eldasoft.gene.web.struts.genric.prospetto.ParametriProspettoForm"/>
+        <!-- form-bean importati da struts-config-gene-genmod.xml per l'implementazione
+		 del wizard per la creazione di una ricerca base -->
+        <!-- form-bean per l'implementazione del wizard di import report -->
+        <form-bean name="uploadFileForm" type="it.eldasoft.gene.commons.web.struts.UploadFileForm"/>
+        <form-bean name="opzioniImportForm" type="it.eldasoft.gene.web.struts.genric.impexp.OpzioniImportForm"/>
+        <!-- form-bean per l'implementazione del wizard di import report -->
+    </form-beans>
+    <global-forwards>
+        <forward module="/" name="appNotLoaded" path="errorDef" redirect="true"/>
+        <forward module="/" name="login" path="/InitLogin.do"/>
+        <forward module="/" name="logged" path="/WEB-INF/pages/gene/login/alreadyLogged.jsp"/>
+        <forward module="/" name="sessionTimeOut" path="/SessionTimeOut.do" redirect="true"/>
+        <forward module="/" name="opzioneNonDisponibile" path="errorDef" redirect="true"/>
+        <forward module="/" name="opzioneNonAbilitata" path="errorDef" redirect="true"/>
+        <forward module="/" name="error" path="errorDef" redirect="true"/>
+        <forward module="/" name="closeAndRefresh" path="/WEB-INF/pages/commons/closeAndRefresh.jsp"/>
+        <forward module="/" name="applicazioneDaAttivare" path="/WEB-INF/pages/gene/attivazione/formAttivazione.jsp"/>
+    </global-forwards>
+    <action-mappings>
+        <action name="trovaRicercheForm" path="/InitTrovaRicerche"
+            scope="request"
+            type="org.springframework.web.struts.DelegatingActionProxy" validate="false">
+            <forward name="success" path="trovaRicercheDef"/>
+        </action>
+        <action name="trovaRicercheForm" parameter="metodo"
+            path="/TrovaRicerche" scope="request"
+            type="org.springframework.web.struts.DelegatingActionProxy" validate="false">
+            <forward name="success" path="trovaRicercheDef"/>
+            <forward name="successListaRicerche" path="listaRicercheDef"/>
+            <forward name="successTrovaRicerche" path="/InitTrovaRicerche.do"/>
+            <forward name="noRecordFound" path="/InitTrovaRicerche.do"/>
+        </action>
+        <action name="listaForm" parameter="metodo" path="/ListaRicerche"
+            scope="request"
+            type="org.springframework.web.struts.DelegatingActionProxy" validate="false">
+            <forward name="successElimina" path="/TrovaRicerche.do?metodo=trovaRicerche"/>
+        </action>
+        <action path="/CopiaProspetto" scope="request"
+            type="org.springframework.web.struts.DelegatingActionProxy" validate="false">
+            <forward name="success" path="/TrovaRicerche.do?metodo=trovaRicerche"/>
+        </action>
+        <action path="/CreaNuovaRicerca" scope="request"
+            type="org.springframework.web.struts.DelegatingActionProxy" validate="false">
+            <forward name="success" path="creaNuovaRicercaDef"/>
+            <forward name="successBase" path="/CreaEliminaRicercaBase.do?metodo=crea&amp;famiglia=0"/>
+            <forward name="successAvanzato" path="/CreaEliminaRicerca.do?metodo=crea&amp;famiglia=1"/>
+            <forward name="successProspetto" path="/CreaEliminaRicercaProspetto.do?metodo=crea&amp;famiglia=2"/>
+            <forward name="successReportSql" path="/CreaEliminaRicercaSql.do?metodo=crea&amp;famiglia=4"/>
+        </action>
+        <action path="/CaricaRicerca" scope="request"
+            type="org.springframework.web.struts.DelegatingActionProxy" validate="false">
+            <forward name="successBase" path="/WizardBase.do"/>
+            <forward name="successAvanzata" path="/EditDatiGen.do"/>
+        </action>
+        <!-- Righe commentate per blocco sviluppo wizard report avanzati e con prospetto -->
+        <!--
+		<action path="/CreaNuovaRicercaWizard" 
+		  type="it.eldasoft.gene.web.struts.genric.CreaNuovaRicercaWizardAction"
+		  scope="request" validate="false" >
+			<forward name="success" path="creaNuovaRicercaWizardDef" />
+			<forward name="successBase"	path="/CreaRicercaBaseWizard.do?metodo=crea&amp;famiglia=0" />
+			<forward name="successAvanzato"	path="/CreaRicercaWizard.do?metodo=crea&amp;famiglia=1" />
+			<forward name="successProspetto"	path="/CreaRicercaProspettoWizard.do?metodo=crea&amp;famiglia=2" />
+		</action>
+		
+		<action path="/CreaRicercaWizard"
+			type="org.springframework.web.struts.DelegatingActionProxy"
+			scope="request" validate="false" parameter="metodo">
+			<forward name="successCreaReportBase" path="/WizardBase.do?pageTo=ARG"/>
+			<forward name="successCrea" path="/WizardAvanzato.do?pageTo=ARG2"/>
+			<forward name="successCreaProspetto" path="/WizardAvanzato.do?pageTo=ARG2"/>
+		</action>
+		
+		<action path="/CreaRicercaProspettoWizard"
+			type="org.springframework.web.struts.DelegatingActionProxy"
+			scope="request" validate="false" parameter="metodo">
+			<forward name="successCreaProspetto" path="/WizardProspetto.do?pageTo=ARG"/>
+		</action>
+		
+		<action path="/CreaRicercaBaseWizard"
+			type="org.springframework.web.struts.DelegatingActionProxy"
+			scope="request" validate="false" parameter="metodo">
+			<forward name="successCreaReportBase" path="/WizardBase.do?pageTo=ARG"/>
+		</action>
+-->
+        <!-- Fine righe commentate per blocco sviluppo wizard report avanzati e con prospetto -->
+        <!--   Dettaglio Ricerca   -->
+        <action parameter="metodo" path="/DettaglioRicerca" scope="request"
+            type="org.springframework.web.struts.DelegatingActionProxy" validate="false">
+            <forward name="successVisualizza" path="/CambiaTabRicerca.do"/>
+            <forward name="successCopia" path="/TrovaRicerche.do?metodo=trovaRicerche"/>
+            <forward name="successSalva" path="/CambiaTabRicerca.do"/>
+            <forward name="successSalvaETrova" path="/InitTrovaRicerche.do"/>
+            <forward name="successSalvaELista" path="/TrovaRicerche.do?metodo=trovaRicerche"/>
+            <forward name="successSalvaECrea" path="/DettaglioRicerca.do?metodo=crea"/>
+            <forward name="successSalvaEEsegui" path="/ControllaDatiRicerca.do"/>
+            <forward name="tornaATrovaRicerche" path="/InitTrovaRicerche.do"/>
+            <forward name="tornaAListaRicerche" path="/TrovaRicerche.do?metodo=trovaRicerche"/>
+            <forward name="tornaDettaglioRicercaPrecedente" path="/DettaglioRicerca.do?metodo=visualizza"/>
+            <forward name="tornaAListaRicerchePredefinite" path="/ListaRicerchePredefinite.do"/>
+            <forward module="/" name="tornaAHomePage" path="/Home.do"/>
+            <forward name="errorSalva" path="/CambiaTabRicerca.do"/>
+            <forward name="successCaricaPerEstrazione" path="/ControllaDatiRicercaPredefinita.do"/>
+            <forward name="successCaricaEEsegui" path="/ControllaDatiRicerca.do"/>
+            <forward name="forwardDatiGenProspetto" path="/DettaglioProspetto.do?metodo=visualizza"/>
+            <forward name="forwardEseguiProspettoPredefinito" path="/CheckParametriProspettoPredefinito.do"/>
+            <forward name="errorSalvaReportBase" path="/CambiaTabRicercaBase.do"/>
+            <forward name="successSalvaReportBase" path="/CambiaTabRicercaBase.do"/>
+            <forward name="successSalvaReportSql" path="/CambiaTabRicercaSql.do"/>
+            <forward name="errorSalvaReportSql" path="/CambiaTabRicercaSql.do"/>
+        </action>
+        <action parameter="metodo" path="/CreaEliminaRicerca" scope="request"
+            type="org.springframework.web.struts.DelegatingActionProxy" validate="false">
+            <forward name="lista" path="/TrovaRicerche.do?metodo=trovaRicerche"/>
+            <forward name="successCreaReportBase" path="/EditDatiGen.do"/>
+            <forward name="successCrea" path="/EditDatiGen.do"/>
+            <forward name="successCreaProspetto" path="/EditDatiGenProspetto.do"/>
+            <forward name="successCreaReportSql" path="/EditDatiGen.do"/>
+        </action>
+        <action path="/CambiaTabRicerca" scope="request"
+            type="org.springframework.web.struts.DelegatingActionProxy" validate="false">
+            <forward name="datiGenerali" path="dettaglioDatiGenRicercaDef"/>
+            <forward name="gruppi" path="listaGruppiRicercaDef"/>
+            <forward name="argomenti" path="listaArgomentiRicercaDef"/>
+            <forward name="campi" path="listaCampiRicercaDef"/>
+            <forward name="join" path="listaGiunzioniRicercaDef"/>
+            <forward name="ordinamenti" path="listaOrdinamentiRicercaDef"/>
+            <forward name="filtri" path="listaFiltriRicercaDef"/>
+            <forward name="parametri" path="listaParametriRicercaDef"/>
+            <forward name="layout" path="listaTitoliCampiRicercaDef"/>
+            <forward name="sql" path="dettaglioSqlRicercaSqlDef"/>
+        </action>
+        <!-- Modifica Dati Generali -->
+        <action name="testataRicercaForm" path="/EditDatiGen" scope="request"
+            type="org.springframework.web.struts.DelegatingActionProxy" validate="false">
+            <forward name="successRicercaAvanzata" path="editDatiGenRicercaDef"/>
+            <forward name="successRicercaBase" path="editDatiGenRicercaBaseDef"/>
+            <forward name="successRicercaSql" path="editDatiGenRicercaSqlDef"/>
+        </action>
+        <action name="testataRicercaForm" path="/SalvaDatiGen" scope="request"
+            type="org.springframework.web.struts.DelegatingActionProxy" validate="false">
+            <forward name="success" path="/CambiaTabRicerca.do"/>
+            <forward name="successBase" path="/CambiaTabRicercaBase.do"/>
+            <forward name="successSql" path="/CambiaTabRicercaSql.do"/>
+        </action>
+        <!-- Modifica Gruppi -->
+        <action path="/EditGruppiRicerca" scope="request"
+            type="org.springframework.web.struts.DelegatingActionProxy" validate="false">
+            <forward name="success" path="associazioneGruppiRicercaDef"/>
+            <forward name="successBase" path="associazioneGruppiRicercaBaseDef"/>
+            <forward name="successSql" path="associazioneGruppiRicercaSqlDef"/>
+        </action>
+        <action name="gruppiRicercaForm" path="/SalvaGruppiRicerca"
+            scope="request"
+            type="org.springframework.web.struts.DelegatingActionProxy" validate="false">
+            <forward name="success" path="/CambiaTabRicerca.do"/>
+            <forward name="successBase" path="/CambiaTabRicercaBase.do"/>
+            <forward name="successSql" path="/CambiaTabRicercaSql.do"/>
+        </action>
+        <!-- Modifica Argomenti -->
+        <action path="/InitEditArgomentoRicerca" scope="request"
+            type="it.eldasoft.gene.web.struts.genric.argomenti.InitEditTabellaRicercaAction" validate="false">
+            <forward name="success" path="editArgomentoRicercaDef"/>
+        </action>
+        <action name="tabellaRicercaForm" path="/InitAddArgomentoRicerca"
+            scope="request"
+            type="org.springframework.web.struts.DelegatingActionProxy" validate="false">
+            <forward name="success" path="addArgomentoRicercaDef"/>
+        </action>
+        <action name="tabellaRicercaForm" parameter="metodo"
+            path="/EditArgomentoRicerca" scope="request"
+            type="it.eldasoft.gene.web.struts.genric.argomenti.EditTabellaRicercaAction" validate="false">
+            <forward name="successUpdate" path="/CambiaTabRicerca.do"/>
+            <forward name="errorUpdate" path="/InitEditArgomentoRicerca.do"/>
+            <forward name="successDelete" path="listaArgomentiRicercaDef"/>
+            <forward name="successAdd" path="/CambiaTabRicerca.do"/>
+            <forward name="errorAdd" path="/InitAddArgomentoRicerca.do"/>
+            <forward name="successSetEntPrinc" path="/CambiaTabRicerca.do"/>
+        </action>
+        <!-- Modifica Campi -->
+        <action name="listaForm" parameter="metodo" path="/ListaCampiRicerca"
+            scope="request"
+            type="it.eldasoft.gene.web.struts.genric.campo.ListaCampiRicercaAction" validate="false">
+            <forward name="success" path="listaCampiRicercaDef"/>
+            <forward name="apriModifica" path="editCampoRicercaDef"/>
+        </action>
+        <action parameter="metodo" path="/ListaTitoliCampiRicerca"
+            scope="request"
+            type="it.eldasoft.gene.web.struts.genric.layout.ListaTitoliCampiRicercaAction" validate="false">
+            <forward name="success" path="listaTitoliCampiRicercaDef"/>
+            <forward name="apriModifica" path="editTitoloCampoRicercaDef"/>
+        </action>
+        <action name="campoRicercaForm" path="/SalvaTitoloColonnaRicerca"
+            scope="request"
+            type="it.eldasoft.gene.web.struts.genric.layout.SalvaTitoloCampoRicercaAction" validate="false">
+            <forward name="success" path="listaTitoliCampiRicercaDef"/>
+        </action>
+        <action forward="helpListaValoriFiltroRicercaDef" path="/ApriHelpListaValori"/>
+        <action path="/AddCampoRicerca" scope="request"
+            type="org.springframework.web.struts.DelegatingActionProxy" validate="false">
+            <forward name="success" path="addCampoRicercaDef"/>
+            <forward name="errorInitAdd" path="listaCampiRicercaDef"/>
+        </action>
+        <action name="campoRicercaForm" parameter="metodo"
+            path="/SalvaCampoRicerca" scope="request"
+            type="it.eldasoft.gene.web.struts.genric.campo.SalvaCampoRicercaAction" validate="false">
+            <forward name="success" path="listaCampiRicercaDef"/>
+            <forward name="forwardErroreCampo" path="/ListaCampiRicerca.do?metodo=modifica"/>
+        </action>
+        <action path="/AddElencoCampiRicerca" scope="request"
+            type="org.springframework.web.struts.DelegatingActionProxy" validate="false">
+            <forward name="success" path="addElencoCampiRicercaDef"/>
+            <forward name="errorInitAdd" path="listaCampiRicercaDef"/>
+        </action>
+        <action name="campiRicercaForm" path="/SalvaElencoCampiRicerca"
+            scope="request"
+            type="it.eldasoft.gene.web.struts.genric.campo.SalvaElencoCampiRicercaAction" validate="false">
+            <forward name="success" path="listaCampiRicercaDef"/>
+            <forward name="overflowNumeroColonne" path="/AddElencoCampiRicerca.do"/>
+        </action>
+        <action path="/InitTrovaCampoRicerca" scope="request"
+            type="it.eldasoft.gene.web.struts.genric.campo.InitTrovaCampoRicercaAction" validate="false">
+            <forward name="success" path="trovaCampoRicercaDef"/>
+        </action>
+        <action name="campoRicercaForm" path="/TrovaCampoRicerca"
+            scope="request"
+            type="org.springframework.web.struts.DelegatingActionProxy" validate="false">
+            <forward name="success" path="risultatoTrovaCampoRicercaDef"/>
+            <forward name="noRecordFound" path="/InitTrovaCampoRicerca.do"/>
+        </action>
+        <action path="/SalvaCampoTrovatoRicerca" scope="request"
+            type="it.eldasoft.gene.web.struts.genric.campo.SalvaCampoTrovatoRicercaAction" validate="false"/>
+        <!--   Giunzioni   -->
+        <action path="/InitEditGiunzioneRicerca" scope="request"
+            type="it.eldasoft.gene.web.struts.genric.giunzione.InitEditGiunzioneRicercaAction" validate="false">
+            <forward name="success" path="editGiunzioneRicercaDef"/>
+        </action>
+        <action name="giunzioneRicercaForm" path="/EditGiunzioneRicerca"
+            scope="request"
+            type="it.eldasoft.gene.web.struts.genric.giunzione.EditGiunzioneRicercaAction" validate="false">
+            <forward name="success" path="/CambiaTabRicerca.do"/>
+        </action>
+        <!--   Parametri   -->
+        <action path="/InitAddParametroRicerca" scope="request"
+            type="org.springframework.web.struts.DelegatingActionProxy" validate="false">
+            <forward name="success" path="addParametroRicercaDef"/>
+            <forward name="successSql" path="addParametroRicercaSqlDef"/>
+            <forward name="errorInitAdd" path="listaParametriRicercaDef"/>
+            <forward name="errorInitAddSql" path="listaParametriRicercaSqlDef"/>
+        </action>
+        <action name="parametroRicercaForm" path="/AddParametroRicerca"
+            scope="request"
+            type="it.eldasoft.gene.web.struts.genric.parametro.AddParametroRicercaAction" validate="false">
+            <forward name="success" path="/CambiaTabRicerca.do"/>
+            <forward name="forwardErroreParametroDuplicato" path="/InitAddParametroRicerca.do"/>
+            <forward name="successSql" path="/CambiaTabRicerca.do"/>
+            <forward name="forwardErroreParametroDuplicatoSql" path="/InitAddParametroRicerca.do"/>
+        </action>
+        <action path="/EditParametroRicerca" scope="request"
+            type="org.springframework.web.struts.DelegatingActionProxy" validate="false">
+            <forward name="success" path="editParametroRicercaDef"/>
+        </action>
+        <action name="parametroRicercaForm" parameter="metodo"
+            path="/SalvaParametroRicerca" scope="request"
+            type="it.eldasoft.gene.web.struts.genric.parametro.SalvaParametroRicercaAction" validate="false">
+            <forward name="successUpdate" path="/CambiaTabRicerca.do"/>
+            <forward name="success" path="/CambiaTabRicerca.do"/>
+        </action>
+        <action parameter="metodo" path="/ListaParametriRicerca" scope="request"
+            type="org.springframework.web.struts.DelegatingActionProxy" validate="false">
+            <forward name="success" path="/CambiaTabRicerca.do"/>
+        </action>
+        <!--   Filtri   -->
+        <action path="/AddFiltroRicerca" scope="request"
+            type="org.springframework.web.struts.DelegatingActionProxy" validate="false">
+            <forward name="success" path="addFiltroRicercaDef"/>
+            <forward name="errorInitAdd" path="listaFiltriRicercaDef"/>
+        </action>
+        <action name="filtroRicercaForm" parameter="metodo"
+            path="/SalvaFiltroRicerca" scope="request"
+            type="it.eldasoft.gene.web.struts.genric.filtro.SalvaFiltroRicercaAction" validate="false">
+            <forward name="success" path="listaFiltriRicercaDef"/>
+            <forward name="forwardNuovoParametro" path="/SalvaParametroRicerca.do?metodo=insert"/>
+            <forward name="errorAddFiltro" path="/ListaFiltriRicerca.do?metodo=modifica"/>
+        </action>
+        <action name="listaForm" parameter="metodo" path="/ListaFiltriRicerca"
+            scope="request"
+            type="org.springframework.web.struts.DelegatingActionProxy" validate="false">
+            <forward name="success" path="listaFiltriRicercaDef"/>
+            <forward name="apriModifica" path="editFiltroRicercaDef"/>
+        </action>
+        <!--   Ordinamenti   -->
+        <action path="/AddOrdinamentoRicerca" scope="request"
+            type="it.eldasoft.gene.web.struts.genric.ordinamento.InitAddOrdinamentoRicercaAction" validate="false">
+            <forward name="success" path="addOrdinamentoRicercaDef"/>
+            <forward name="errorInitAdd" path="listaOrdinamentiRicercaDef"/>
+        </action>
+        <action name="listaForm" parameter="metodo"
+            path="/ListaOrdinamentiRicerca" scope="request"
+            type="it.eldasoft.gene.web.struts.genric.ordinamento.ListaOrdinamentiRicercaAction" validate="false">
+            <forward name="success" path="listaOrdinamentiRicercaDef"/>
+            <forward name="apriModifica" path="editOrdinamentoRicercaDef"/>
+        </action>
+        <action name="ordinamentoRicercaForm" parameter="metodo"
+            path="/SalvaOrdinamentoRicerca" scope="request"
+            type="it.eldasoft.gene.web.struts.genric.ordinamento.SalvaOrdinamentoRicercaAction" validate="false">
+            <forward name="success" path="listaOrdinamentiRicercaDef"/>
+        </action>
+        <action path="/EditTitoliCampiRicerca" scope="request"
+            type="it.eldasoft.gene.web.struts.genric.layout.EditTitoliCampiRicercaAction" validate="false">
+            <forward name="success" path="editTitoliCampiRicercaDef"/>
+            <forward name="successBase" path="editTitoliCampiRicercaBaseDef"/>
+        </action>
+        <action name="listaForm" path="/SalvaTitoliCampiRicerca" scope="request"
+            type="it.eldasoft.gene.web.struts.genric.layout.SalvaTitoliCampiRicercaAction" validate="false">
+            <forward name="success" path="/CambiaTabRicerca.do"/>
+            <forward name="successBase" path="/CambiaTabRicercaBase.do"/>
+        </action>
+        <action path="/ControllaDatiRicerca" scope="request"
+            type="it.eldasoft.gene.web.struts.genric.risultato.ControllaDatiRicercaAction" validate="false">
+            <forward name="success" path="/VerificaParametriRicerca.do"/>
+            <forward name="controlliFalliti" path="/CambiaTabRicerca.do"/>
+        </action>
+        <!--   Azione per il setting dei parametri in fase di estrazione   -->
+        <action name="parametriRicercaForm" path="/VerificaParametriRicerca"
+            scope="request"
+            type="org.springframework.web.struts.DelegatingActionProxy" validate="false">
+            <forward name="successRicerca" path="/EstraiRicerca.do"/>
+            <forward name="successSetParametri" path="setParametriRicercaDef"/>
+        </action>
+        <action name="parametriRicercaForm" path="/SalvaParametriRicerca"
+            scope="request"
+            type="org.springframework.web.struts.DelegatingActionProxy" validate="false">
+            <forward name="success" path="/EstraiRicerca.do"/>
+        </action>
+        <action path="/EstraiRicerca" scope="request"
+            type="org.springframework.web.struts.DelegatingActionProxy" validate="false">
+            <forward name="success" path="risultatoRicercaDef"/>
+            <forward name="sqlComposerError" path="/CambiaTabRicerca.do"/>
+            <forward name="sqlComposerErrorReportSql" path="/CambiaTabRicercaSql.do"/>
+            <forward name="sqlError" path="/CambiaTabRicerca.do"/>
+            <forward name="sqlErrorReportSql" path="/CambiaTabRicercaSql.do?tab=SQL"/>
+            <forward name="queryDaoError" path="/CambiaTabRicerca.do"/>
+            <forward name="queryDaoErrorReportSql" path="/CambiaTabRicercaSql.do"/>
+            <forward name="sqlComposerErrorLista" path="/TrovaRicerche.do?metodo=trovaRicerche"/>
+            <forward name="sqlErrorLista" path="/TrovaRicerche.do?metodo=trovaRicerche"/>
+            <forward name="queryDaoErrorLista" path="/TrovaRicerche.do?metodo=trovaRicerche"/>
+        </action>
+        <!--   Lista Ricerche Predefinite   -->
+        <action path="/ListaRicerchePredefinite" scope="request"
+            type="org.springframework.web.struts.DelegatingActionProxy" validate="false">
+            <forward name="success" path="listaRicerchePredefiniteDef"/>
+        </action>
+        <action parameter="metodo" path="/EseguiRicercaPredefinita"
+            scope="request"
+            type="org.springframework.web.struts.DelegatingActionProxy" validate="false">
+            <forward name="successCaricaPerEstrazione" path="/ControllaDatiRicercaPredefinita.do"/>
+            <forward name="successCaricaEEsegui" path="/ControllaDatiRicerca.do"/>
+            <forward name="forwardDatiGenProspetto" path="/DettaglioProspetto.do?metodo=visualizza"/>
+            <forward name="forwardEseguiProspettoPredefinito" path="/CheckParametriProspettoPredefinito.do"/>
+            <forward name="tornaAListaRicerchePredefinite" path="/ListaRicerchePredefinite.do"/>
+        </action>
+        <action path="/ControllaDatiRicercaPredefinita" scope="request"
+            type="it.eldasoft.gene.web.struts.genric.risultato.ControllaDatiRicercaAction" validate="false">
+            <forward name="success" path="/VerificaParametriRicercaPredefinita.do"/>
+            <forward name="controlliFalliti" path="/ListaRicerchePredefinite.do"/>
+        </action>
+        <!--   Azione per il setting dei parametri in fase di estrazione   -->
+        <action name="parametriRicercaForm"
+            path="/VerificaParametriRicercaPredefinita" scope="request"
+            type="org.springframework.web.struts.DelegatingActionProxy" validate="false">
+            <forward name="successRicerca" path="/EstraiRicercaPredefinita.do"/>
+            <forward name="successSetParametri" path="setParametriRicercaPredefinitaDef"/>
+        </action>
+        <action name="parametriRicercaForm"
+            path="/SalvaParametriRicercaPredefinita" scope="request"
+            type="org.springframework.web.struts.DelegatingActionProxy" validate="false">
+            <forward name="success" path="/EstraiRicercaPredefinita.do"/>
+        </action>
+        <action path="/EstraiRicercaPredefinita" scope="request"
+            type="org.springframework.web.struts.DelegatingActionProxy" validate="false">
+            <forward name="success" path="risultatoRicercaPredefinitaDef"/>
+            <forward name="sqlComposer" path="/ListaRicerchePredefinite.do"/>
+            <forward name="sqlError" path="/ListaRicerchePredefinite.do"/>
+            <forward name="queryDaoError" path="/ListaRicerchePredefinite.do"/>
+            <forward name="sqlComposerErrorLista" path="/ListaRicerchePredefinite.do"/>
+            <forward name="sqlErrorLista" path="/ListaRicerchePredefinite.do"/>
+            <forward name="queryDaoErrorLista" path="/ListaRicerchePredefinite.do"/>
+        </action>
+        <action path="/StampaRisultatoRicerca" scope="request"
+            type="org.springframework.web.struts.DelegatingActionProxy" validate="false">
+            <forward module="/" name="success" path="/WEB-INF/pages/gene/genric/risultato/popupRisultatoRicercaStampa.jsp"/>
+            <forward module="/" name="sqlError" path="errorDef" redirect="true"/>
+        </action>
+        <!-- Action per la gestione delle Ricerche con prospetto -->
+        <!--   Dettaglio Dati Generali Prospetto   -->
+        <action parameter="metodo" path="/DettaglioProspetto" scope="request"
+            type="org.springframework.web.struts.DelegatingActionProxy" validate="false">
+            <forward name="successVisualizza" path="dettaglioDatiGenProspettoDef"/>
+            <!-- forward name="successModifica" path="/EditDatiGenProspetto.do" />
+			<forward name="successCrea" path="/EditDatiGenProspetto.do" />
+			<forward name="successElimina" path="/TrovaRicerche.do?metodo=trovaRicerche"/>
+			<forward name="successSalvaEEsegui"	path="/ControllaDatiRicerca.do" />
+			<forward name="tornaATrovaRicerche" path="/InitTrovaRicerche.do" />
+			<forward name="tornaAListaRicerche" path="/TrovaRicerche.do?metodo=trovaRicerche" />
+			<forward name="tornaAHomePage" path="/Home.do" module="/"/>
+			<forward name="errorSalva" path="/CambiaTabRicerca.do" / -->
+            <forward name="errorDownloadDaDettaglio" path="/DettaglioProspetto.do?metodo=visualizza"/>
+        </action>
+        <action path="/EditDatiGenProspetto" scope="request"
+            type="org.springframework.web.struts.DelegatingActionProxy" validate="false">
+            <forward name="success" path="editDatiGenProspettoDef"/>
+        </action>
+        <action name="datiGenProspettoForm" parameter="metodo"
+            path="/SalvaDatiGenProspetto" scope="request"
+            type="org.springframework.web.struts.DelegatingActionProxy" validate="false">
+            <forward name="success" path="/DettaglioProspetto.do?metodo=visualizza"/>
+            <forward name="errorInsertProspetto" path="/EditDatiGenProspetto.do"/>
+        </action>
+        <action parameter="metodo" path="/ListaGruppiProspetto" scope="request"
+            type="org.springframework.web.struts.DelegatingActionProxy" validate="false">
+            <forward name="successVisualizza" path="listaGruppiProspettoDef"/>
+            <forward name="successEdit" path="associazioneGruppiProspettoDef"/>
+        </action>
+        <action name="gruppiRicercaForm" path="/SalvaGruppiProspetto"
+            scope="request"
+            type="org.springframework.web.struts.DelegatingActionProxy" validate="false">
+            <forward name="success" path="/ListaGruppiProspetto.do?metodo=visualizzaLista"/>
+        </action>
+        <action parameter="metodo" path="/ParametriProspetti" scope="request"
+            type="org.springframework.web.struts.DelegatingActionProxy" validate="false">
+            <forward name="successParametriLista" path="listaParametriProspettoDef"/>
+            <forward name="successEditParametroModello" path="editParametroProspettoDef"/>
+            <forward name="successDeleteParametroModello" path="/ParametriProspetti.do?metodo=listaParametriModello"/>
+            <forward name="successSpostaParametroModello" path="/ParametriProspetti.do?metodo=listaParametriModello"/>
+        </action>
+        <action name="parametroModelloForm" parameter="metodo"
+            path="/SalvaParametroProspetto" scope="request"
+            type="org.springframework.web.struts.DelegatingActionProxy" validate="false">
+            <forward name="success" path="/ParametriProspetti.do?metodo=listaParametriModello"/>
+            <forward name="errorUnique" path="editParametroProspettoDef"/>
+            <forward name="errorTabellato" path="editParametroProspettoDef"/>
+        </action>
+        <!-- forward name="setParametriPredefiniti" path="setParametriProspettoPredifinitoDef"/-->
+        <action name="parametriProspettoForm" path="/CheckParametriProspetto"
+            scope="request"
+            type="org.springframework.web.struts.DelegatingActionProxy" validate="false">
+            <forward name="setParametri" path="setParametriProspettoDef"/>
+            <forward name="componiModello" path="composizioneInCorsoDef"/>
+            <forward name="salvaEComponi" path="/SalvaParametriProspetto.do?metodo=salvaEComponiModello"/>
+            <forward name="listaRicerche" path="/TrovaRicerche.do?metodo=trovaRicerche"/>
+            <forward name="dettaglioProspetto" path="/DettaglioProspetto.do?metodo=visualizza"/>
+        </action>
+        <action name="parametriProspettoForm"
+            path="/CheckParametriProspettoPredefinito" scope="request"
+            type="org.springframework.web.struts.DelegatingActionProxy" validate="false">
+            <forward name="listaReportPredefiniti" path="/ListaRicerchePredefinite.do"/>
+            <forward name="setParametriPredefiniti" path="setParametriProspettoPredifinitoDef"/>
+            <forward name="componiModello" path="composizioneInCorsoPredefinitoDef"/>
+            <forward name="salvaEComponi" path="/SalvaParametriProspettoPredefinito.do?metodo=salvaEComponiModello"/>
+        </action>
+        <action name="parametriProspettoForm" parameter="metodo"
+            path="/SalvaParametriProspetto" scope="request"
+            type="org.springframework.web.struts.DelegatingActionProxy" validate="false">
+            <forward name="success" path="composizioneInCorsoDef"/>
+        </action>
+        <action name="parametriProspettoForm" parameter="metodo"
+            path="/SalvaParametriProspettoPredefinito" scope="request"
+            type="org.springframework.web.struts.DelegatingActionProxy" validate="false">
+            <forward name="success" path="composizioneInCorsoPredefinitoDef"/>
+        </action>
+        <action name="parametriProspettoForm" parameter="metodo"
+            path="/ComponiProspetto" scope="request"
+            type="org.springframework.web.struts.DelegatingActionProxy" validate="false">
+            <forward name="errorComposizione" path="errorComposizioneDef"/>
+            <forward name="error" path="errorComposizioneDef"/>
+            <forward name="success" path="downloadProspettoCompostoDef"/>
+            <forward name="successBackDownloadLista" path="History.do?metodo=vaia"/>
+            <forward name="successBackDownloadDettaglio" path="History.do?metodo=vaia"/>
+        </action>
+        <action name="parametriProspettoForm" parameter="metodo"
+            path="/ComponiProspettoPredefinito" scope="request"
+            type="org.springframework.web.struts.DelegatingActionProxy" validate="false">
+            <forward name="errorComposizione" path="/ListaRicerchePredefinite.do"/>
+            <forward name="error" path="/ListaRicerchePredefinite.do"/>
+            <forward name="success" path="downloadProspettoCompostoPredefinitoDef"/>
+            <forward name="successBackDownload" path="/ListaRicerchePredefinite.do"/>
+        </action>
+        <action parameter="metodo" path="/CreaEliminaRicercaProspetto"
+            scope="request"
+            type="org.springframework.web.struts.DelegatingActionProxy" validate="false">
+            <forward name="successCreaProspetto" path="/EditDatiGenProspetto.do"/>
+            <forward name="lista" path="/TrovaRicerche.do?metodo=trovaRicerche"/>
+        </action>
+        <!-- Action per il wizard della creazione di una ricerca base -->
+        <action path="/CambiaTabRicercaBase" scope="request"
+            type="org.springframework.web.struts.DelegatingActionProxy" validate="false">
+            <forward name="datiGenerali" path="dettaglioDatiGenRicercaBaseDef"/>
+            <forward name="gruppi" path="listaGruppiRicercaBaseDef"/>
+            <forward name="campi" path="listaCampiRicercaBaseDef"/>
+            <forward name="ordinamenti" path="listaOrdinamentiRicercaBaseDef"/>
+            <forward name="filtri" path="listaFiltriRicercaBaseDef"/>
+            <forward name="layout" path="listaTitoliCampiRicercaBaseDef"/>
+        </action>
+        <action path="/WizardBase" scope="request"
+            type="org.springframework.web.struts.DelegatingActionProxy" validate="false">
+            <forward name="successEditArg" path="argomentoRicercaBaseDef"/>
+            <forward name="successEditCam" path="campiRicercaBaseDef"/>
+            <forward name="successDomandaFil" path="domandaFiltroRicercaBaseDef"/>
+            <forward name="successEditFil" path="filtriRicercaBaseDef"/>
+            <forward name="successListaFil" path="riepilogoFiltriRicercaBaseDef"/>
+            <forward name="successDomandaOrd" path="domandaOrdinamentoRicercaBaseDef"/>
+            <forward name="successEditOrd" path="ordinamentiRicercaBaseDef"/>
+            <forward name="successListaOrd" path="riepilogoOrdinamentiRicercaBaseDef"/>
+            <forward name="successEditLay" path="layoutRicercaBaseDef"/>
+            <forward name="successDomandaPub" path="pubblicaRicercaBaseDef"/>
+            <forward name="successEditGrp" path="gruppiRicercaBaseDef"/>
+            <forward name="successEditDg" path="datiGeneraliRicercaBaseDef"/>
+            <forward name="tornaASceltaTipoReport" path="/CreaNuovaRicerca.do"/>
+        </action>
+        <action name="tabellaRicercaForm" parameter="metodo"
+            path="/ArgomentoBase" scope="request"
+            type="it.eldasoft.gene.web.struts.genric.base.wizard.ArgomentoAction" validate="false">
+            <forward name="successSalva" path="/WizardBase.do?pageTo=CAM"/>
+            <forward name="errorInitAdd" path="errorDef"/>
+        </action>
+        <action name="campiRicercaForm" parameter="metodo" path="/CampiBase"
+            scope="request"
+            type="it.eldasoft.gene.web.struts.genric.base.wizard.CampiAction" validate="false">
+            <forward name="successSalva" path="/WizardBase.do?pageTo=FIL1"/>
+            <forward name="successFine" path="/WizardBase.do?pageTo=DG"/>
+            <forward name="overflowNumeroColonne" path="/WizardBase.do?pageTo=CAM"/>
+        </action>
+        <action name="filtroRicercaForm" parameter="metodo" path="/FiltriBase"
+            scope="request"
+            type="it.eldasoft.gene.web.struts.genric.base.wizard.FiltriAction" validate="false">
+            <forward name="successAdd" path="/WizardBase.do?pageTo=FIL2"/>
+            <forward name="successSalva" path="/WizardBase.do?pageTo=FIL1"/>
+            <forward name="successAnnullaLista" path="/WizardBase.do?pageTo=FIL1"/>
+            <forward name="successFine" path="/WizardBase.do?pageTo=DG"/>
+            <forward name="errorSalva" path="/WizardBase.do?pageTo=FIL2"/>
+            <forward name="successElimina" path="/WizardBase.do?pageTo=FIL3"/>
+            <forward name="successModifica" path="/WizardBase.do?pageTo=FIL3"/>
+        </action>
+        <action name="ordinamentoRicercaForm" parameter="metodo"
+            path="/OrdinamentiBase" scope="request"
+            type="it.eldasoft.gene.web.struts.genric.base.wizard.OrdinamentiAction" validate="false">
+            <forward name="successAdd" path="/WizardBase.do?pageTo=ORD2"/>
+            <forward name="successSalva" path="/WizardBase.do?pageTo=ORD1"/>
+            <forward name="successAnnullaLista" path="/WizardBase.do?pageTo=ORD1"/>
+            <forward name="successFine" path="/WizardBase.do?pageTo=DG"/>
+            <forward name="successElimina" path="/WizardBase.do?pageTo=ORD3"/>
+            <forward name="successModifica" path="/WizardBase.do?pageTo=ORD3"/>
+        </action>
+        <action name="listaForm" parameter="metodo" path="/LayoutBase"
+            scope="request"
+            type="it.eldasoft.gene.web.struts.genric.base.wizard.LayoutAction" validate="false">
+            <forward name="success" path="/WizardBase.do?pageTo=PUB"/>
+            <forward name="successFine" path="/WizardBase.do?pageTo=DG"/>
+        </action>
+        <action parameter="metodo" path="/PubblicaBase" scope="request"
+            type="it.eldasoft.gene.web.struts.genric.base.wizard.PubblicaAction" validate="false">
+            <forward name="successGruppi" path="/WizardBase.do?pageTo=GRP"/>
+            <forward name="successFine" path="/WizardBase.do?pageTo=DG"/>
+        </action>
+        <action name="gruppiRicercaForm" path="/GruppiBase" scope="request"
+            type="org.springframework.web.struts.DelegatingActionProxy" validate="false">
+            <forward name="successBase" path="/WizardBase.do?pageTo=DG"/>
+        </action>
+        <action name="testataRicercaForm" parameter="metodo"
+            path="/DatiGeneraliBase" scope="request"
+            type="it.eldasoft.gene.web.struts.genric.base.wizard.DatiGeneraliAction" validate="false">
+            <forward name="successSalva" path="/SalvaWizardBase.do?metodo=salva"/>
+            <forward name="error" path="/WizardBase.do?pageTo=DG"/>
+        </action>
+        <action name="testataRicercaForm" parameter="metodo"
+            path="/SalvaWizardBase" scope="request"
+            type="org.springframework.web.struts.DelegatingActionProxy" validate="false">
+            <forward name="errorSalvaReportBase" path="/WizardBase.do?pageTo=DG"/>
+            <forward name="successSalvaReportBase" path="/CambiaTabRicercaBase.do?pageTo=DG"/>
+        </action>
+        <action parameter="metodo" path="/CreaEliminaRicercaBase"
+            scope="request"
+            type="org.springframework.web.struts.DelegatingActionProxy" validate="false">
+            <forward name="successCreaReportBase" path="/WizardBase.do?pageTo=ARG"/>
+            <forward name="lista" path="/TrovaRicerche.do?metodo=trovaRicerche"/>
+        </action>
+        <!-- Fine delle Action per il wizard della creazione di una ricerca base -->
+        <!-- Action per gestione di report base per la modifica dei report base stessi -->
+        <action path="/AddElencoCampiRicercaBase" scope="request"
+            type="org.springframework.web.struts.DelegatingActionProxy" validate="false">
+            <forward name="success" path="addElencoCampiRicercaBaseDef"/>
+            <forward name="errorInitAdd" path="listaCampiRicercaBaseDef"/>
+        </action>
+        <action name="campiRicercaForm" path="/SalvaElencoCampiRicercaBase"
+            scope="request"
+            type="it.eldasoft.gene.web.struts.genric.base.SalvaElencoCampiRicercaBaseAction" validate="false">
+            <forward name="success" path="listaCampiRicercaBaseDef"/>
+            <forward name="overflowNumeroColonne" path="/AddElencoCampiRicercaBase.do"/>
+        </action>
+        <action name="listaForm" parameter="metodo"
+            path="/ListaCampiRicercaBase" scope="request"
+            type="it.eldasoft.gene.web.struts.genric.base.ListaCampiRicercaBaseAction" validate="false">
+            <forward name="success" path="listaCampiRicercaBaseDef"/>
+        </action>
+        <action path="/AddFiltroRicercaBase" scope="request"
+            type="it.eldasoft.gene.web.struts.genric.base.InitAddFiltroRicercaBaseAction" validate="false">
+            <forward name="success" path="addFiltroRicercaBaseDef"/>
+            <forward name="errorInitAdd" path="listaFiltriRicercaBaseDef"/>
+        </action>
+        <action name="filtroRicercaForm" parameter="metodo"
+            path="/SalvaFiltroRicercaBase" scope="request"
+            type="it.eldasoft.gene.web.struts.genric.base.SalvaFiltroRicercaBaseAction" validate="false">
+            <forward name="success" path="/CambiaTabRicercaBase.do"/>
+            <forward name="errorAddFiltro" path="/ListaFiltriRicercaBase.do?metodo=modifica"/>
+        </action>
+        <action name="listaForm" parameter="metodo"
+            path="/ListaFiltriRicercaBase" scope="request"
+            type="it.eldasoft.gene.web.struts.genric.base.ListaFiltriRicercaBaseAction" validate="false">
+            <forward name="success" path="/CambiaTabRicercaBase.do"/>
+            <forward name="apriModifica" path="editFiltroRicercaBaseDef"/>
+        </action>
+        <action name="listaForm" path="/AddOrdinamentoRicercaBase"
+            scope="request"
+            type="it.eldasoft.gene.web.struts.genric.base.InitAddOrdinamentoRicercaBaseAction" validate="false">
+            <forward name="success" path="addOrdinamentoRicercaBaseDef"/>
+            <forward name="errorInitAdd" path="listaOrdinamentiRicercaBaseDef"/>
+        </action>
+        <action name="listaForm" parameter="metodo"
+            path="/ListaOrdinamentiRicercaBase" scope="request"
+            type="it.eldasoft.gene.web.struts.genric.base.ListaOrdinamentiRicercaBaseAction" validate="false">
+            <forward name="success" path="listaOrdinamentiRicercaBaseDef"/>
+            <forward name="apriModifica" path="editOrdinamentoRicercaBaseDef"/>
+        </action>
+        <action name="ordinamentoRicercaForm" parameter="metodo"
+            path="/SalvaOrdinamentoRicercaBase" scope="request"
+            type="it.eldasoft.gene.web.struts.genric.ordinamento.SalvaOrdinamentoRicercaAction" validate="false">
+            <forward name="success" path="listaOrdinamentiRicercaBaseDef"/>
+        </action>
+        <action parameter="metodo" path="/ListaTitoliCampiRicercaBase"
+            scope="request"
+            type="it.eldasoft.gene.web.struts.genric.layout.ListaTitoliCampiRicercaAction" validate="false">
+            <forward name="success" path="listaTitoliCampiRicercaBaseDef"/>
+            <forward name="apriModifica" path="editTitoloCampoRicercaBaseDef"/>
+        </action>
+        <action name="campoRicercaForm" path="/SalvaTitoloColonnaRicercaBase"
+            scope="request"
+            type="it.eldasoft.gene.web.struts.genric.layout.SalvaTitoloCampoRicercaAction" validate="false">
+            <forward name="success" path="listaTitoliCampiRicercaBaseDef"/>
+        </action>
+        <!-- Fine action per gestione di report base per la modifica dei report base stessi -->
+        <!-- Action per l'estrazione di un report base -->
+        <action path="/ControllaDatiRicercaBase" scope="request"
+            type="it.eldasoft.gene.web.struts.genric.risultato.ControllaDatiRicercaBaseAction" validate="false">
+            <forward name="success" path="/EstraiRicercaBase.do"/>
+            <forward name="controlliFalliti" path="/CambiaTabRicercaBase.do"/>
+        </action>
+        <action path="/EstraiRicercaBase" scope="request"
+            type="org.springframework.web.struts.DelegatingActionProxy" validate="false">
+            <forward name="success" path="risultatoRicercaDef"/>
+            <forward name="sqlComposerError" path="/CambiaTabRicercaBase.do"/>
+            <forward name="sqlError" path="/CambiaTabRicercaBase.do"/>
+            <forward name="queryDaoError" path="/CambiaTabRicercaBase.do"/>
+            <forward name="sqlComposerErrorLista" path="/TrovaRicerche.do?metodo=trovaRicerche"/>
+            <forward name="sqlErrorLista" path="/TrovaRicerche.do?metodo=trovaRicerche"/>
+            <forward name="queryDaoErrorLista" path="/TrovaRicerche.do?metodo=trovaRicerche"/>
+        </action>
+        <!-- Fine action per l'estrazione di un report base -->
+        <!-- Action per report SQL  -->
+        <action path="/CambiaTabRicercaSql" scope="request"
+            type="org.springframework.web.struts.DelegatingActionProxy" validate="false">
+            <forward name="datiGenerali" path="dettaglioDatiGenRicercaSqlDef"/>
+            <forward name="gruppi" path="listaGruppiRicercaSqlDef"/>
+            <forward name="sql" path="dettaglioSqlRicercaSqlDef"/>
+            <forward name="parametri" path="listaParametriRicercaSqlDef"/>
+        </action>
+        <action parameter="metodo" path="/CreaEliminaRicercaSql" scope="request"
+            type="org.springframework.web.struts.DelegatingActionProxy" validate="false">
+            <forward name="successCreaReportSql" path="/EditDatiGen.do"/>
+            <forward name="lista" path="/TrovaRicerche.do?metodo=trovaRicerche"/>
+        </action>
+        <action path="/SalvaSqlRicerca" scope="request"
+            type="it.eldasoft.gene.web.struts.genric.reportSql.SalvaSqlRicercaSqlAction" validate="false">
+            <forward name="success" path="/CambiaTabRicercaSql.do"/>
+            <forward name="errorSql" path="/EditSqlRicerca.do"/>
+        </action>
+        <action path="/EditSqlRicerca" scope="request"
+            type="it.eldasoft.gene.web.struts.genric.reportSql.EditSqlRicercaSqlAction" validate="false">
+            <forward name="success" path="formEditSqlRicercaSqlDef"/>
+        </action>
+        <action parameter="metodo" path="/ListaParametriRicercaSql"
+            scope="request"
+            type="it.eldasoft.gene.web.struts.genric.reportSql.ListaParametriRicercaSqlAction" validate="false">
+            <forward name="success" path="/CambiaTabRicercaSql.do"/>
+            <forward name="successDeleteParametroRicercaSql" path="/CambiaTabRicercaSql.do"/>
+            <forward name="successSpostaParametroRicercaSql" path="/CambiaTabRicercaSql.do"/>
+        </action>
+        <action path="/EditParametroRicercaSql" scope="request"
+            type="org.springframework.web.struts.DelegatingActionProxy" validate="false">
+            <forward name="success" path="editParametroRicercaSqlDef"/>
+        </action>
+        <action name="parametroRicercaForm" parameter="metodo"
+            path="/SalvaParametroRicercaSql" scope="request"
+            type="it.eldasoft.gene.web.struts.genric.reportSql.SalvaParametroRicercaSqlAction" validate="false">
+            <forward name="success" path="/CambiaTabRicercaSql.do"/>
+            <forward name="errorParam" path="/EditParametroRicercaSql.do"/>
+        </action>
+        <!-- Fine action per report SQL  -->
+        <action path="/EsportaRisultatoRicerca" scope="request"
+            type="org.springframework.web.struts.DelegatingActionProxy" validate="false"/>
+        <!--  Action per le funzionalita' avanzate di import/export definizione report -->
+        <action path="/InitFunzAvanzate" scope="request"
+            type="it.eldasoft.gene.web.struts.genric.impexp.InitFunzAvanzate" validate="false">
+            <forward name="success" path="sceltaImportExportDef"/>
+        </action>
+        <action path="/AnnullaImportExport" scope="request"
+            type="it.eldasoft.gene.web.struts.genric.impexp.AnnullaImportExportAction" validate="false">
+            <forward module="/" name="success" path="/Home.do"/>
+        </action>
+        <action path="/InitTrovaRicercheExport" scope="request"
+            type="org.springframework.web.struts.DelegatingActionProxy" validate="false">
+            <forward name="success" path="trovaRicercheExportDef"/>
+        </action>
+        <action name="trovaRicercheExportForm" parameter="metodo"
+            path="/TrovaRicercheExport" scope="request"
+            type="org.springframework.web.struts.DelegatingActionProxy" validate="false">
+            <forward name="success" path="trovaRicercheDef"/>
+            <forward name="successListaRicerche" path="listaRicercheExportDef"/>
+            <forward name="successTrovaRicerche" path="/InitTrovaRicercheExport.do"/>
+            <forward name="noRecordFound" path="/InitTrovaRicercheExport.do"/>
+        </action>
+        <action parameter="metodo" path="/EsportaRicerca" scope="request"
+            type="org.springframework.web.struts.DelegatingActionProxy" validate="false">
+            <forward name="successElimina" path="/TrovaRicercheExport.do?metodo=trovaRicerche"/>
+        </action>
+        <action path="/WizardImportRicerca" scope="request"
+            type="org.springframework.web.struts.DelegatingActionProxy" validate="false">
+            <forward name="successUpload" path="uploadDefinizioneImportRicercaDef"/>
+            <forward name="successDatiGenerali" path="datiGeneraliImportRicercaDef"/>
+            <forward name="successDomandaPub" path="pubblicaImportRicercaDef"/>
+            <forward name="successEditGrp" path="gruppiImportRicercaDef"/>
+            <forward name="successFine" path="/EseguiImport.do"/>
+        </action>
+        <action name="uploadFileForm" path="/UploadDefinizioneRicerca"
+            scope="request"
+            type="org.springframework.web.struts.DelegatingActionProxy" validate="false">
+            <forward name="success" path="/WizardImportRicerca.do?pageTo=DG"/>
+            <forward name="errorImport" path="/WizardImportRicerca.do?pageTo=UPL"/>
+        </action>
+        <action name="opzioniImportForm" path="/SetOpzioniImport"
+            scope="request"
+            type="org.springframework.web.struts.DelegatingActionProxy" validate="false">
+            <forward name="successDomandaPub" path="/WizardImportRicerca.do?pageTo=PUB"/>
+            <forward name="successEditGrp" path="/WizardImportRicerca.do?pageTo=GRP"/>
+            <forward name="successFine" path="/EseguiImport.do"/>
+            <forward name="errorImport" path="/WizardImportRicerca.do?pageTo=DG"/>
+        </action>
+        <action name="opzioniImportForm" path="/PubblicaImport" scope="request"
+            type="it.eldasoft.gene.web.struts.genric.impexp.PubblicaImportAction" validate="false">
+            <forward name="successFine" path="/EseguiImport.do"/>
+            <forward name="successEditGrp" path="/WizardImportRicerca.do?pageTo=GRP"/>
+        </action>
+        <action name="gruppiRicercaForm" path="/GruppiImport" scope="request"
+            type="it.eldasoft.gene.web.struts.genric.impexp.GruppiImportAction" validate="false">
+            <forward name="success" path="/EseguiImport.do"/>
+        </action>
+        <action path="/EseguiImport" scope="request"
+            type="org.springframework.web.struts.DelegatingActionProxy" validate="false">
+            <forward name="success" path="successImportRicercaDef"/>
+            <forward name="errorImport" path="/WizardImportRicerca.do"/>
+        </action>
+    </action-mappings>
+    <plug-in className="org.apache.struts.tiles.TilesPlugin">
+        <set-property property="definitions-config" value="/WEB-INF/xml/tiles/tiles-defs-gene-common.xml, /WEB-INF/xml/tiles/tiles-defs-gene-genric.xml"/>
+        <set-property property="moduleAware" value="true"/>
+    </plug-in>
+</struts-config>

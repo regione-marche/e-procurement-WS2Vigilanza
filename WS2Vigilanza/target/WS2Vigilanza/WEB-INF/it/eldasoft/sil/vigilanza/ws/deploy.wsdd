@@ -1,0 +1,160 @@
+<!-- Use this file to deploy some handlers/chains and services      -->
+<!-- Two ways to do this:                                           -->
+<!--   java org.apache.axis.client.AdminClient deploy.wsdd          -->
+<!--      after the axis server is running                          -->
+<!-- or                                                             -->
+<!--   java org.apache.axis.utils.Admin client|server deploy.wsdd   -->
+<!--      from the same directory that the Axis engine runs         -->
+
+<deployment
+    xmlns="http://xml.apache.org/axis/wsdd/"
+    xmlns:java="http://xml.apache.org/axis/wsdd/providers/java">
+
+  <!-- Services from SitatWSService WSDL service -->
+
+  <service name="SitatWS" provider="java:RPC" style="wrapped" use="literal">
+      <parameter name="wsdlTargetNamespace" value="http://ws.vigilanza.sil.eldasoft.it"/>
+      <parameter name="wsdlServiceElement" value="SitatWSService"/>
+      <parameter name="schemaQualified" value="http://beans.ws.vigilanza.sil.eldasoft.it"/>
+      <parameter name="wsdlServicePort" value="SitatWS"/>
+      <parameter name="className" value="it.eldasoft.sil.vigilanza.ws.SitatWSSoapBindingSkeleton"/>
+      <parameter name="wsdlPortType" value="SitatWS"/>
+      <parameter name="typeMappingVersion" value="1.2"/>
+      <parameter name="allowedMethods" value="*"/>
+
+      <typeMapping
+        xmlns:ns="http://beans.ws.vigilanza.sil.eldasoft.it"
+        qname="ns:ResponseType"
+        type="java:it.eldasoft.sil.vigilanza.ws.beans.ResponseType"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="http://beans.ws.vigilanza.sil.eldasoft.it"
+        qname="ns:TestataType"
+        type="java:it.eldasoft.sil.vigilanza.ws.beans.TestataType"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="http://beans.ws.vigilanza.sil.eldasoft.it"
+        qname="ns:IstanzaOggettoType"
+        type="java:it.eldasoft.sil.vigilanza.ws.beans.IstanzaOggettoType"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="http://beans.ws.vigilanza.sil.eldasoft.it"
+        qname="ns:ResponseSchedaBType"
+        type="java:it.eldasoft.sil.vigilanza.ws.beans.ResponseSchedaBType"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="http://beans.ws.vigilanza.sil.eldasoft.it"
+        qname="ns:ResponseSchedaAType"
+        type="java:it.eldasoft.sil.vigilanza.ws.beans.ResponseSchedaAType"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="http://beans.ws.vigilanza.sil.eldasoft.it"
+        qname="ns:ResponseAvvisoType"
+        type="java:it.eldasoft.sil.vigilanza.ws.beans.ResponseAvvisoType"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="http://beans.ws.vigilanza.sil.eldasoft.it"
+        qname="ns:LoginType"
+        type="java:it.eldasoft.sil.vigilanza.ws.beans.LoginType"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="http://beans.ws.vigilanza.sil.eldasoft.it"
+        qname="ns:ResponseLottoType"
+        type="java:it.eldasoft.sil.vigilanza.ws.beans.ResponseLottoType"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="http://beans.ws.vigilanza.sil.eldasoft.it"
+        qname="ns:ResponsePubblicazioneType"
+        type="java:it.eldasoft.sil.vigilanza.ws.beans.ResponsePubblicazioneType"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+  </service>
+  
+  <!-- Services from EldasoftSimogWSService WSDL service -->
+
+  <service name="EldasoftSimogWS" provider="java:RPC" style="wrapped" use="literal">
+      <parameter name="wsdlTargetNamespace" value="http://ws.simog.eldasoft.it/"/>
+      <parameter name="wsdlServiceElement" value="EldasoftSimogWSService"/>
+      <parameter name="schemaUnqualified" value="http://ws.simog.eldasoft.it/"/>
+      <parameter name="wsdlServicePort" value="EldasoftSimogWS"/>
+      <parameter name="className" value="it.eldasoft.simog.ws.EldasoftSimogWSBindingSkeleton"/>
+      <parameter name="wsdlPortType" value="EldasoftSimogWS"/>
+      <parameter name="typeMappingVersion" value="1.2"/>
+      <parameter name="allowedMethods" value="*"/>
+
+      <typeMapping
+        xmlns:ns="http://ws.simog.eldasoft.it/"
+        qname="ns:esitoConsultaIDGARA"
+        type="java:it.eldasoft.simog.ws.EsitoConsultaIDGARA"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="http://ws.simog.eldasoft.it/"
+        qname="ns:informazioneType"
+        type="java:it.eldasoft.simog.ws.InformazioneType"
+        serializer="org.apache.axis.encoding.ser.EnumSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.EnumDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="http://ws.simog.eldasoft.it/"
+        qname="ns:esitoConsultaCIG"
+        type="java:it.eldasoft.simog.ws.EsitoConsultaCIG"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="http://ws.simog.eldasoft.it/"
+        qname="ns:operazioneDMLType"
+        type="java:it.eldasoft.simog.ws.OperazioneDMLType"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="http://ws.simog.eldasoft.it/"
+        qname="ns:operazioneType"
+        type="java:it.eldasoft.simog.ws.OperazioneType"
+        serializer="org.apache.axis.encoding.ser.EnumSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.EnumDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="http://ws.simog.eldasoft.it/"
+        qname="ns:esitoInserisciGaraLotto"
+        type="java:it.eldasoft.simog.ws.EsitoInserisciGaraLotto"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+  </service>
+</deployment>
